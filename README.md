@@ -50,7 +50,7 @@ curl http://localhost:8080/api/snowflake/get/test
 ```
 #### 配置介绍
 
-Leaf 提供两种生成的ID的方式（号段模式和snowflake模式），你可以同时开启两种方式，也可以指定开启某种方式（默认两种方式都会开启）。
+Leaf 提供两种生成的ID的方式（号段模式和snowflake模式），你可以同时开启两种方式，也可以指定开启某种方式（默认两种方式为关闭状态）。
 
 Leaf Server的配置都在leaf-server/src/main/resources/leaf.properties中
 
