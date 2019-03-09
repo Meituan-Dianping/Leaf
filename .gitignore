@@ -12,3 +12,10 @@
 target/
 logs/
 log/
+
+# Eclipse project files
+.classpath
+.project
+.settings
+.settings/
+target/

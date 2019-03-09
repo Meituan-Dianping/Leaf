@@ -7,9 +7,7 @@
         <artifactId>leaf-parent</artifactId>
         <version>1.0.1</version>
     </parent>
-    <groupId>com.sankuai.inf.leaf</groupId>
     <artifactId>leaf-server</artifactId>
-    <version>1.0.1</version>
     <packaging>jar</packaging>
     <name>leaf-server</name>
     <description>Leaf HTTP Server</description>
@@ -75,7 +73,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>${spring-boot-dependencies.version}</version>
             </plugin>
-            <plugin>
+            <!-- <plugin>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
                     <execution>
@@ -87,12 +85,12 @@
                         <configuration>
                             <outputDirectory>${project.build.directory}/lib</outputDirectory>
                             <excludeTransitive>false</excludeTransitive>
-                            <!-- 表示复制的jar文件去掉版本信息 -->
+                            表示复制的jar文件去掉版本信息
                             <stripVersion>false</stripVersion>
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>
+            </plugin> -->
 
         </plugins>
     </build>
