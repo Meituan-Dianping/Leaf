@@ -1,6 +1,7 @@
 package com.sankuai.inf.leaf.server;
 
 import com.alibaba.druid.pool.DruidDataSource;
+import com.alibaba.druid.proxy.DruidDriver;
 import com.sankuai.inf.leaf.IDGen;
 import com.sankuai.inf.leaf.common.PropertyFactory;
 import com.sankuai.inf.leaf.common.Result;
@@ -9,6 +10,7 @@ import com.sankuai.inf.leaf.segment.SegmentIDGenImpl;
 import com.sankuai.inf.leaf.segment.dao.IDAllocDao;
 import com.sankuai.inf.leaf.segment.dao.impl.IDAllocDaoImpl;
 import com.sankuai.inf.leaf.server.exception.InitException;
+import org.apache.tomcat.util.bcel.Const;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -21,14 +23,14 @@ public class SegmentService {
     private Logger logger = LoggerFactory.getLogger(SegmentService.class);
     IDGen idGen;
     DruidDataSource dataSource;
-    public SegmentService() throws SQLException, InitException {
+    public SegmentService() throws SQLException, InitException, ClassNotFoundException {
         Properties properties = PropertyFactory.getProperties();
         boolean flag = Boolean.parseBoolean(properties.getProperty(Constants.LEAF_SEGMENT_ENABLE, "true"));
         if (flag) {
 
-
             // Config dataSource
             dataSource = new DruidDataSource();
+            dataSource.setDriverClassName(properties.getProperty(Constants.LEAF_JDBC_DRIVER));
             dataSource.setUrl(properties.getProperty(Constants.LEAF_JDBC_URL));
             dataSource.setUsername(properties.getProperty(Constants.LEAF_JDBC_USERNAME));
             dataSource.setPassword(properties.getProperty(Constants.LEAF_JDBC_PASSWORD));
