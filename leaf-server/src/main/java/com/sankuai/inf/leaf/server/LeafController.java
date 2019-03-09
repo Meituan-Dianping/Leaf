@@ -33,6 +33,7 @@ public class LeafController {
     private String get(@PathVariable("key") String key, Result id) {
         Result result;
         if (key == null || key.isEmpty()) {
+            logger.info("key is null or \"\".");
             throw new NoKeyException();
         }
 
