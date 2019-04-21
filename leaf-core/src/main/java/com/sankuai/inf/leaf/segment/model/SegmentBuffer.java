@@ -1,7 +1,10 @@
 package com.sankuai.inf.leaf.segment.model;
 
 import java.util.Arrays;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -14,6 +17,7 @@ public class SegmentBuffer {
     private Segment[] segments; //双buffer
     private volatile int currentPos; //当前的使用的segment的index
     private volatile boolean nextReady; //下一个segment是否处于可切换状态
+    private AtomicReference<CountDownLatch> waitForNextLatchRef; //等待next segment
     private volatile boolean initOk; //是否初始化完成
     private final AtomicBoolean threadRunning; //线程是否在运行中
     private final ReadWriteLock lock;
@@ -26,6 +30,7 @@ public class SegmentBuffer {
         segments = new Segment[]{new Segment(this), new Segment(this)};
         currentPos = 0;
         nextReady = false;
+        waitForNextLatchRef = new AtomicReference<>(new CountDownLatch(1));
         initOk = false;
         threadRunning = new AtomicBoolean(false);
         lock = new ReentrantReadWriteLock();
@@ -65,6 +70,15 @@ public class SegmentBuffer {
 
     public void setInitOk(boolean initOk) {
         this.initOk = initOk;
+    }
+
+    public void wakeUpWaiterAndReset() {
+        waitForNextLatchRef.get().countDown();
+        waitForNextLatchRef.set(new CountDownLatch(1));
+    }
+
+    public void waitForNextReady(long timeout) throws InterruptedException {
+        waitForNextLatchRef.get().await(timeout, TimeUnit.MILLISECONDS);
     }
 
     public boolean isNextReady() {

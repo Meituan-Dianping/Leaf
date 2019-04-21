@@ -210,6 +210,7 @@ public class SegmentIDGenImpl implements IDGen {
                                     buffer.wLock().lock();
                                     buffer.setNextReady(true);
                                     buffer.getThreadRunning().set(false);
+                                    buffer.wakeUpWaiterAndReset();
                                     buffer.wLock().unlock();
                                 } else {
                                     buffer.getThreadRunning().set(false);
@@ -247,18 +248,10 @@ public class SegmentIDGenImpl implements IDGen {
     }
 
     private void waitAndSleep(SegmentBuffer buffer) {
-        int roll = 0;
-        while (buffer.getThreadRunning().get()) {
-            roll += 1;
-            if(roll > 10000) {
-                try {
-                    Thread.currentThread().sleep(10);
-                    break;
-                } catch (InterruptedException e) {
-                    logger.warn("Thread {} Interrupted",Thread.currentThread().getName());
-                    break;
-                }
-            }
+        try {
+            buffer.waitForNextReady(20);
+        } catch (InterruptedException e) {
+            logger.warn("Thread {} Interrupted",Thread.currentThread().getName());
         }
     }
 
