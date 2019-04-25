@@ -37,7 +37,7 @@ public class Utils {
         if (addressList.isEmpty()) {
             return _getIp();
         }
-        if (preferPatterns.length == 0) {
+        if (preferPatterns.length == 0 || addressList.size() == 1) {
             return addressList.get(0).getHostAddress();
         }
         for (Pattern pattern : preferPatterns) {
