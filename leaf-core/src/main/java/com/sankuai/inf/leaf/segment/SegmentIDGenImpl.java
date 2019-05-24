@@ -252,7 +252,7 @@ public class SegmentIDGenImpl implements IDGen {
             roll += 1;
             if(roll > 10000) {
                 try {
-                    Thread.currentThread().sleep(10);
+                    TimeUnit.MILLISECONDS.sleep(10);
                     break;
                 } catch (InterruptedException e) {
                     logger.warn("Thread {} Interrupted",Thread.currentThread().getName());
