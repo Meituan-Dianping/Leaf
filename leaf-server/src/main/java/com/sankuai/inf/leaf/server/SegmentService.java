@@ -29,6 +29,7 @@ public class SegmentService {
 
             // Config dataSource
             dataSource = new DruidDataSource();
+            dataSource.setDriverClassName(properties.getProperty(Constants.LEAF_DATASOURCE_DRIVER_CLASS_NAME));
             dataSource.setUrl(properties.getProperty(Constants.LEAF_JDBC_URL));
             dataSource.setUsername(properties.getProperty(Constants.LEAF_JDBC_USERNAME));
             dataSource.setPassword(properties.getProperty(Constants.LEAF_JDBC_PASSWORD));
