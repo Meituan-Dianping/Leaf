@@ -155,7 +155,7 @@
         </dependencies>
     </dependencyManagement>
     <build>
-<!--        <finalName>leaf</finalName>-->
+        <finalName>leaf</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

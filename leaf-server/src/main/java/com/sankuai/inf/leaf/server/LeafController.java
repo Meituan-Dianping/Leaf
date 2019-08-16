@@ -24,10 +24,14 @@ public class LeafController {
         return get(key, segmentService.getId(key));
     }
 
-    @RequestMapping(value = "/api/snowflake/get/{key}")
-    public String getSnowflakeID(@PathVariable("key") String key) {
-        return get(key, snowflakeService.getId(key));
-
+    @RequestMapping(value = "/api/snowflake/get")
+    public String getSnowflakeID() {
+        Result result = snowflakeService.getId(null);
+        if(result.getStatus() == Status.SUCCESS){
+            return String.valueOf(result.getId());
+        }else {
+            throw new LeafServerException(result.toString());
+        }
     }
 
     private String get(@PathVariable("key") String key, Result id) {

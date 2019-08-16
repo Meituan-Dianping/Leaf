@@ -2,7 +2,6 @@ package com.sankuai.inf.leaf.server;
 
 import com.alibaba.druid.pool.DruidDataSource;
 import com.sankuai.inf.leaf.IDGen;
-import com.sankuai.inf.leaf.common.PropertyFactory;
 import com.sankuai.inf.leaf.common.Result;
 import com.sankuai.inf.leaf.common.ZeroIDGen;
 import com.sankuai.inf.leaf.segment.SegmentIDGenImpl;
@@ -11,27 +10,38 @@ import com.sankuai.inf.leaf.segment.dao.impl.IDAllocDaoImpl;
 import com.sankuai.inf.leaf.server.exception.InitException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.sql.SQLException;
-import java.util.Properties;
 
 @Service("SegmentService")
 public class SegmentService {
     private Logger logger = LoggerFactory.getLogger(SegmentService.class);
+    @Value("${leaf.segment.enable:false}")
+    private Boolean leafSegmentEnable;
+    @Value("${leaf.jdbc.url:''}")
+    private String leafJdbcUrl;
+    @Value("${leaf.jdbc.username:''}")
+    private String leafJdbcUsername;
+    @Value("${leaf.jdbc.password:''}")
+    private String leafJdbcPassword;
+
     IDGen idGen;
     DruidDataSource dataSource;
-    public SegmentService() throws SQLException, InitException {
-        Properties properties = PropertyFactory.getProperties();
-        boolean flag = Boolean.parseBoolean(properties.getProperty(Constants.LEAF_SEGMENT_ENABLE, "true"));
+
+    @PostConstruct
+    public void init() throws SQLException, InitException {
+        boolean flag = leafSegmentEnable;
         if (flag) {
 
 
             // Config dataSource
             dataSource = new DruidDataSource();
-            dataSource.setUrl(properties.getProperty(Constants.LEAF_JDBC_URL));
-            dataSource.setUsername(properties.getProperty(Constants.LEAF_JDBC_USERNAME));
-            dataSource.setPassword(properties.getProperty(Constants.LEAF_JDBC_PASSWORD));
+            dataSource.setUrl(leafJdbcUrl);
+            dataSource.setUsername(leafJdbcUsername);
+            dataSource.setPassword(leafJdbcPassword);
             dataSource.init();
 
             // Config Dao

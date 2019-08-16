@@ -1,0 +1,92 @@
+server:
+  port: 9999
+
+spring:
+  freemarker:
+    cache: false
+    charset: UTF-8
+    check-template-location: true
+    content-type: text/html
+    expose-request-attributes: true
+    expose-session-attributes: true
+    request-context-attribute: request
+
+  profiles:
+    active: stage
+---
+
+spring:
+  profiles: dev
+
+leaf:
+  name: mall-leaf
+  segment:
+    enable: false
+#  jdbc:
+#    url:
+#    username:
+#    password:
+
+  snowflake:
+    enable: true
+    zk:
+      address: 127.0.0.1
+      port: 2181
+
+---
+
+spring:
+  profiles: beta
+
+leaf:
+  name: mall-leaf
+  segment:
+    enable: false
+  #  jdbc:
+  #    url:
+  #    username:
+  #    password:
+
+  snowflake:
+    enable: true
+    zk:
+      address: 127.0.0.1
+      port: 2181
+
+---
+spring:
+  profiles: stage
+
+leaf:
+  name: mall-leaf
+  segment:
+    enable: false
+  #  jdbc:
+  #    url:
+  #    username:
+  #    password:
+
+  snowflake:
+    enable: true
+    zk:
+      address: stage.zk.edianzu.com
+      port: 2181
+
+---
+spring:
+  profiles: online
+
+leaf:
+  name: mall-leaf
+  segment:
+    enable: false
+  #  jdbc:
+  #    url:
+  #    username:
+  #    password:
+
+  snowflake:
+    enable: true
+    zk:
+      address: mall.zk.edianzu-inc.cn
+      port: 2181

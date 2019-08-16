@@ -1,28 +1,38 @@
 package com.sankuai.inf.leaf.server;
 
 import com.sankuai.inf.leaf.IDGen;
-import com.sankuai.inf.leaf.common.PropertyFactory;
 import com.sankuai.inf.leaf.common.Result;
 import com.sankuai.inf.leaf.common.ZeroIDGen;
 import com.sankuai.inf.leaf.server.exception.InitException;
 import com.sankuai.inf.leaf.snowflake.SnowflakeIDGenImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.util.Properties;
+import javax.annotation.PostConstruct;
 
 @Service("SnowflakeService")
 public class SnowflakeService {
     private Logger logger = LoggerFactory.getLogger(SnowflakeService.class);
+    @Value("${leaf.name}")
+    private String leafName;
+    @Value("${leaf.snowflake.enable:true}")
+    private Boolean leafSnowflakeEnable;
+    @Value("${leaf.snowflake.zk.address}")
+    private String leafSnowflakeZkAddress;
+    @Value("${leaf.snowflake.zk.port}")
+    private Integer leafSnowflakePort;
+
     IDGen idGen;
-    public SnowflakeService() throws InitException {
-        Properties properties = PropertyFactory.getProperties();
-        boolean flag = Boolean.parseBoolean(properties.getProperty(Constants.LEAF_SNOWFLAKE_ENABLE, "true"));
+
+    @PostConstruct
+    public void init() throws InitException {
+        boolean flag = leafSnowflakeEnable;
         if (flag) {
-            String zkAddress = properties.getProperty(Constants.LEAF_SNOWFLAKE_ZK_ADDRESS);
-            int port = Integer.parseInt(properties.getProperty(Constants.LEAF_SNOWFLAKE_PORT));
-            idGen = new SnowflakeIDGenImpl(zkAddress, port);
+            String zkAddress = leafSnowflakeZkAddress;
+            int port = leafSnowflakePort;
+            idGen = new SnowflakeIDGenImpl(zkAddress, port,leafName);
             if(idGen.init()) {
                 logger.info("Snowflake Service Init Successfully");
             } else {

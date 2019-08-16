@@ -31,19 +31,25 @@ public class SnowflakeZookeeperHolder {
     private String zk_AddressNode = null;//保存自身的key  ip:port-000000001
     private String listenAddress = null;//保存自身的key ip:port
     private int workerID;
-    private static final String PREFIX_ZK_PATH = "/snowflake/" + PropertyFactory.getProperties().getProperty("leaf.name");
-    private static final String PROP_PATH = System.getProperty("java.io.tmpdir") + File.separator + PropertyFactory.getProperties().getProperty("leaf.name") + "/leafconf/{port}/workerID.properties";
-    private static final String PATH_FOREVER = PREFIX_ZK_PATH + "/forever";//保存所有数据持久的节点
+//    private static String PREFIX_ZK_PATH = "/snowflake/" + PropertyFactory.getProperties().getProperty("leaf.name");
+//    private static String PROP_PATH = System.getProperty("java.io.tmpdir") + File.separator + PropertyFactory.getProperties().getProperty("leaf.name") + "/leafconf/{port}/workerID.properties";
+//    private static String PATH_FOREVER = PREFIX_ZK_PATH + "/forever";//保存所有数据持久的节点
+    private static String PREFIX_ZK_PATH;
+    private static String PROP_PATH;
+    private static String PATH_FOREVER;
     private String ip;
     private String port;
     private String connectionString;
     private long lastUpdateTime;
 
-    public SnowflakeZookeeperHolder(String ip, String port, String connectionString) {
+    public  SnowflakeZookeeperHolder(String ip, String port, String connectionString, String leafName) {
         this.ip = ip;
         this.port = port;
         this.listenAddress = ip + ":" + port;
         this.connectionString = connectionString;
+        PREFIX_ZK_PATH = "/snowflake/" + leafName;
+        PROP_PATH = System.getProperty("java.io.tmpdir") + File.separator + leafName + "/leafconf/{port}/workerID.properties";
+        PATH_FOREVER = PREFIX_ZK_PATH + "/forever";
     }
 
     public boolean init() {
