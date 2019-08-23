@@ -14,7 +14,7 @@ public class SnowflakeIDGenImplTest {
     @Test
     public void testGetId() throws Exception {
         Properties properties = PropertyFactory.getProperties();
-        final IDGen idGen = new SnowflakeIDGenImpl(properties.getProperty("leaf.zk.list"), 2181);
+        final IDGen idGen = new SnowflakeIDGenImpl(properties.getProperty("leaf.zk.list"), 2181,"leaf");
         int size = 1000;
         ExecutorService executorService = Executors.newFixedThreadPool(size);
         final CountDownLatch countDownLatch = new CountDownLatch(size);

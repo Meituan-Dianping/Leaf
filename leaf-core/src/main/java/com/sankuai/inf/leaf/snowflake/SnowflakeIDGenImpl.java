@@ -29,27 +29,11 @@ public class SnowflakeIDGenImpl implements IDGen {
     private long workerId;
     private long sequence = 0L;
     private long lastTimestamp = -1L;
-    public boolean initFlag = false;
     private static final Random RANDOM = new Random();
-    private int port;
-
-    public SnowflakeIDGenImpl(String zkAddress, int port) {
-        this.port = port;
-        SnowflakeZookeeperHolder holder = new SnowflakeZookeeperHolder(Utils.getIp(), String.valueOf(port), zkAddress,null);
-        initFlag = holder.init();
-        if (initFlag) {
-            workerId = holder.getWorkerID();
-            LOGGER.info("START SUCCESS USE ZK WORKERID-{}", workerId);
-        } else {
-            Preconditions.checkArgument(initFlag, "Snowflake Id Gen is not init ok");
-        }
-        Preconditions.checkArgument(workerId >= 0 && workerId <= maxWorkerId, "workerID must gte 0 and lte 1023");
-    }
 
     public SnowflakeIDGenImpl(String zkAddress, int port, String leafName) {
-        this.port = port;
         SnowflakeZookeeperHolder holder = new SnowflakeZookeeperHolder(Utils.getIp(), String.valueOf(port), zkAddress, leafName);
-        initFlag = holder.init();
+        boolean initFlag = holder.init();
         if (initFlag) {
             workerId = holder.getWorkerID();
             LOGGER.info("START SUCCESS USE ZK WORKERID-{}", workerId);
