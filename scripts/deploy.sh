@@ -53,11 +53,12 @@ function stop(){
         kill -15 $PID
         sleep 3
         checkProcess $SERVER_NAME 0 #检查服务是否在停止
-        PID=$?
-        if [[ "$PID" == "1" ]];then
+        STATUS=$?
+        if [[ "$STATUS" == "1" ]];then
             echo "stop   服务停止成功！"
         else
             echo "stop   服务停止失败！"
+            exit -1
         fi
         fi
 
@@ -73,6 +74,7 @@ function start(){
         STATUS=$?
         if [[ "$STATUS" == "0" ]];then
             echo "服务运行失败！"
+            exit -1
         else
             PID=`ps aux | grep $SERVER_NAME | grep -v 'grep' | grep -v 'sh' | awk '{print $2}'`
             echo "服务运行成功！PID: $PID"
