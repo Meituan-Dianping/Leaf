@@ -2,19 +2,17 @@ package com.sankuai.inf.leaf.snowflake;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Maps;
 import com.sankuai.inf.leaf.snowflake.exception.CheckLastTimeException;
 import org.apache.commons.io.FileUtils;
+import org.apache.curator.RetryPolicy;
 import org.apache.curator.framework.CuratorFramework;
+import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.RetryUntilElapsed;
+import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.data.Stat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.Maps;
-import com.sankuai.inf.leaf.common.*;
-import org.apache.curator.RetryPolicy;
-import org.apache.curator.framework.CuratorFrameworkFactory;
-import org.apache.zookeeper.CreateMode;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -75,8 +73,16 @@ public class SnowflakeZookeeperHolder {
                     //有自己的节点,zk_AddressNode=ip:port
                     zk_AddressNode = PATH_FOREVER + "/" + realNode.get(listenAddress);
                     workerID = workerid;//启动worder时使用会使用
-                    if (!checkInitTimeStamp(curator, zk_AddressNode))
-                        throw new CheckLastTimeException("init timestamp check error,forever node timestamp gt this node time");
+//                    if (!checkInitTimeStamp(curator, zk_AddressNode)){
+//                        throw new CheckLastTimeException("init timestamp check error,forever node timestamp gt this node time");
+//                    }
+
+                    //判断相同ip上运行的服务是否正常
+                    if (checkNodeStatus(curator,zk_AddressNode)){
+                        //不允许在相同ip上启动多台 workid相同的实例
+                        LOGGER.error("the same ip instance is running, please stop it befort start");
+                        System.exit(-1);
+                    }
                     //准备创建临时节点
                     doService(curator);
                     updateLocalWorkerID(workerID);
@@ -105,6 +111,34 @@ public class SnowflakeZookeeperHolder {
             }
         }
         return true;
+    }
+
+    /**
+     * 校验节点是否存活
+     * @param curator
+     * @param zk_addressNode
+     * @return
+     * @throws Exception
+     */
+    private boolean checkNodeStatus(CuratorFramework curator, String zk_addressNode) throws Exception  {
+        Endpoint oldEndPoint = getEndpoint(curator);
+        if(oldEndPoint == null){
+            return false;
+        }
+        Long oldData = oldEndPoint.getTimestamp();
+
+        Thread.sleep(4 * 1000);//sleep 4s
+        Endpoint newEndPoint = getEndpoint(curator);
+        if(newEndPoint == null){
+            return false;
+        }
+        Long newData = newEndPoint.getTimestamp();
+        return !oldData.equals(newData);
+    }
+
+    private Endpoint getEndpoint(CuratorFramework curator) throws Exception {
+        byte[] bytes = curator.getData().forPath(zk_AddressNode);
+        return deBuildData(new String(bytes));
     }
 
     private void doService(CuratorFramework curator) {
