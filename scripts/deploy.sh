@@ -68,7 +68,7 @@ function stop(){
 function start(){
     PID=`ps aux | grep $SERVER_NAME | grep -v 'grep' | grep -v 'sh' | awk '{print $2}'`
     if [[ -z "$PID" ]];then
-        nohup java -jar $JAR_PATH $JAVA_OPT -Dspring.profiles.active=$SERVER_MODE -Dserver.port=$SERVER_PORT > $LOG_PATH 2>&1 &
+        nohup java -jar $JAR_PATH $JAVA_OPT -Dspring.profiles.active=$SERVER_MODE --server.port=$SERVER_PORT > $LOG_PATH 2>&1 &
 
         checkProcess $SERVER_NAME 1  #检查服务是否在运行
         STATUS=$?
