@@ -6,6 +6,7 @@ import com.sankuai.inf.leaf.common.Result;
 import org.junit.Test;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.*;
@@ -19,7 +20,7 @@ public class SnowflakeIDGenImplTest {
         ExecutorService executorService = Executors.newFixedThreadPool(size);
         final CountDownLatch countDownLatch = new CountDownLatch(size);
         final CyclicBarrier cyclicBarrier = new CyclicBarrier(size);
-        final Set<Long> resSet = new HashSet<>();
+        final Map<Long,Long> resMap = new ConcurrentHashMap<>();
         for(int j = 0; j< size; j++){
             executorService.execute(new Runnable() {
                 @Override
@@ -31,13 +32,7 @@ public class SnowflakeIDGenImplTest {
                     }
                     for (int i = 0; i < 1000; ++i) {
                         Result r = idGen.get("a");
-//                        System.out.println(r);
-                        boolean status = resSet.add(r.getId());
-                        if(status){
-                            System.out.println(r.getId());
-                        }else {
-                            System.err.println(r.getId());
-                        }
+                        resMap.put(r.getId(),System.currentTimeMillis());
                     }
                     countDownLatch.countDown();
                 }
@@ -48,6 +43,6 @@ public class SnowflakeIDGenImplTest {
 
         executorService.shutdown();
 
-        System.out.println("----------> size: " + resSet.size());
+        System.out.println("----------> size: " + resMap.keySet().size());
     }
 }
