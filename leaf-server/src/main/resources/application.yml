@@ -12,7 +12,7 @@ spring:
     request-context-attribute: request
 
   profiles:
-    active: stage
+    active: dev
 ---
 
 spring:
@@ -28,10 +28,14 @@ leaf:
 #    password:
 
   snowflake:
-    enable: true
+    enable: false
     zk:
-      address: 127.0.0.1
+      address: 192.168.1.121
       port: 2181
+
+nacos:
+  discovery:
+    server-addr: 192.168.1.121:8848
 
 ---
 

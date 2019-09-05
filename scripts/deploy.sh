@@ -120,9 +120,10 @@ elif [[ "$METHOD_NAME" == "status" && $ARG_NUM -eq 1 ]];then
 else
     echo "=================================================================="
     echo " you can use next method name:                                    "
-    echo " start : start  mode port eg: start stage 9999  "
-    echo " stop  : stop                                         "
+    echo " start : start  mode port eg: start stage 9999                    "
+    echo " stop  : stop                                                     "
     echo " reload: reload mode port eg: reload stage 9999                   "
+    echo " status: status                                                   "
     echo "=================================================================="
 fi
 
