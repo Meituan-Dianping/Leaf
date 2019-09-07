@@ -11,12 +11,14 @@
     <packaging>jar</packaging>
     <version>1.0.1</version>
     <name>leaf-core</name>
-    <properties>
-        <mysql-connector-java.version>5.1.38</mysql-connector-java.version>
-        <commons-io.version>2.4</commons-io.version>
-        <log4j.version>2.7</log4j.version>
-        <mybatis-spring.version>1.2.5</mybatis-spring.version>
-    </properties>
+
+<!--    <properties>-->
+<!--        <mysql-connector-java.version>5.1.38</mysql-connector-java.version>-->
+<!--        <commons-io.version>2.4</commons-io.version>-->
+<!--        <log4j.version>2.7</log4j.version>-->
+<!--        <mybatis-spring.version>1.2.5</mybatis-spring.version>-->
+<!--    </properties>-->
+
     <dependencies>
         <dependency>
             <groupId>org.mybatis</groupId>
@@ -44,25 +46,8 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>${jackson-databind.version}</version>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j-impl</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-api</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-core</artifactId>
-            <scope>test</scope>
-        </dependency>
-
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>druid</artifactId>

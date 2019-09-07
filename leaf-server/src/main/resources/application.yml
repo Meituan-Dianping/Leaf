@@ -30,12 +30,13 @@ leaf:
   snowflake:
     enable: false
     zk:
-      address: 192.168.1.121
+      address: 127.0.0.1
       port: 2181
 
 nacos:
+  enable: true
   discovery:
-    server-addr: 192.168.1.121:8848
+    server-addr: 127.0.0.1:8848
 
 ---
 
@@ -57,6 +58,11 @@ leaf:
       address: 127.0.0.1
       port: 2181
 
+nacos:
+  enable: false
+  discovery:
+    server-addr: 127.0.0.1:8848
+
 ---
 spring:
   profiles: stage
@@ -76,6 +82,11 @@ leaf:
       address: stage.zk.edianzu.com
       port: 2181
 
+nacos:
+  enable: false
+  discovery:
+    server-addr: 127.0.0.1:8848
+
 ---
 spring:
   profiles: online
@@ -94,3 +105,8 @@ leaf:
     zk:
       address: mall.zk.edianzu-inc.cn
       port: 2181
+
+nacos:
+  enable: false
+  discovery:
+    server-addr: 127.0.0.1:8848

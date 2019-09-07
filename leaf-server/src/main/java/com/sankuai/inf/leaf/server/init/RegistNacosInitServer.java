@@ -27,6 +27,8 @@ public class RegistNacosInitServer implements InitServer{
     private NamingService namingService;
     @Autowired
     private WebApplicationContext webApplicationContext;
+    @Value("${nacos.enable}")
+    private boolean enableNacos;
     @Value("${leaf.name}")
     private String leafName;
     @Value("${server.port}")
@@ -34,6 +36,10 @@ public class RegistNacosInitServer implements InitServer{
 
     @Override
     public void init(){
+        if(!enableNacos){
+            log.info("nacos enable is false , can not regist server to nacos !");
+            return;
+        }
         //获取服务
         Set<String> requestMappingList = new HashSet<>();
 
@@ -58,9 +64,9 @@ public class RegistNacosInitServer implements InitServer{
         //注册服务
         try {
             namingService.registerInstance(leafName,instance);
-            log.info("regist server success ! serverName:{},ip:{},port:{}",leafName,ip,port);
+            log.info("regist server to nacos success ! serverName:{},ip:{},port:{}",leafName,ip,port);
         } catch (NacosException e) {
-            log.error("regist server fail",e);
+            log.error("regist server to nacos fail",e);
         }
     }
 }

@@ -108,3 +108,23 @@ insert into leaf_alloc(biz_tag, max_id, step, description) values('leaf-segment-
 ### Leaf Core
 
 当然，为了追求更高的性能，需要通过RPC Server来部署Leaf 服务，那仅需要引入leaf-core的包，把生成ID的API封装到指定的RPC框架中即可。
+
+### Leaf Client
+
+引入nacos，可以启动多个实例，将服务注册到nacos中，进行负载均衡，提高服务的可用性
+
+nacos home : https://nacos.io/zh-cn/docs/quick-start.html
+
+使用服务时，不用手动进行http访问，只需引入leaf-client
+```java
+LeafClient leafClient = new LeafClient("nacos_addr","server_name");
+String res = leafClient.request("method_pattern");
+
+note:
+    nacos_addr : nacos服务地址
+    server_name: 服务名
+    method_pattern: 请求服务下指定方法
+eg:
+    LeafClient leafClient = new LeafClient("127.0.0.1:8848","mall-leaf");
+    String res = leafClient.request("/api/snowflake/get");
+```

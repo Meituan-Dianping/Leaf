@@ -64,9 +64,4 @@ public class LeafMonitorController {
         model.addAttribute("items", items);
         return "db";
     }
-
-    @GetMapping(value = "/a")
-    public void getMapping(){}
-
-
 }
