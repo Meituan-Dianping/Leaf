@@ -17,13 +17,9 @@ public class SnowflakeIDGenImpl implements IDGen {
         return true;
     }
 
-    static private final Logger LOGGER = LoggerFactory.getLogger(SnowflakeIDGenImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SnowflakeIDGenImpl.class);
 
-    /**
-     * Thu Nov 04 2010 09:42:54 GMT+0800 (中国标准时间)
-     * 我们定义的起始的时间戳，这样可以让时间戳存储时间更久
-     */
-    private final long twepoch = 1288834974657L;
+    private final long twepoch;
     private final long workerIdBits = 10L;
     private final long maxWorkerId = ~(-1L << workerIdBits);//最大能够分配的workerid =1023
     private final long sequenceBits = 12L;
@@ -36,8 +32,22 @@ public class SnowflakeIDGenImpl implements IDGen {
     private static final Random RANDOM = new Random();
 
     public SnowflakeIDGenImpl(String zkAddress, int port) {
-        SnowflakeZookeeperHolder holder = new SnowflakeZookeeperHolder(Utils.getIp(), String.valueOf(port), zkAddress);
-        boolean initFlag = holder.init();
+        //Thu Nov 04 2010 09:42:54 GMT+0800 (中国标准时间) 
+        this(zkAddress, port, 1288834974657L);
+    }
+
+    /**
+     * @param zkAddress zk地址
+     * @param port      snowflake监听端口
+     * @param twepoch   起始的时间戳
+     */
+    public SnowflakeIDGenImpl(String zkAddress, int port, long twepoch) {
+        this.twepoch = twepoch;
+        Preconditions.checkArgument(timeGen() > twepoch, "Snowflake not support twepoch gt currentTime");
+        final String ip = Utils.getIp();
+        SnowflakeZookeeperHolder holder = new SnowflakeZookeeperHolder(ip, String.valueOf(port), zkAddress);
+        LOGGER.info("twepoch:{} ,ip:{} ,zkAddress:{} port:{}", twepoch, ip, zkAddress, port);
+        initFlag = holder.init();
         if (initFlag) {
             workerId = holder.getWorkerID();
             LOGGER.info("START SUCCESS USE ZK WORKERID-{}", workerId);
