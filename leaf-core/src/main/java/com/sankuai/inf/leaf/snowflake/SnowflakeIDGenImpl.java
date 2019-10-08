@@ -47,7 +47,7 @@ public class SnowflakeIDGenImpl implements IDGen {
         final String ip = Utils.getIp();
         SnowflakeZookeeperHolder holder = new SnowflakeZookeeperHolder(ip, String.valueOf(port), zkAddress);
         LOGGER.info("twepoch:{} ,ip:{} ,zkAddress:{} port:{}", twepoch, ip, zkAddress, port);
-        initFlag = holder.init();
+        boolean initFlag = holder.init();
         if (initFlag) {
             workerId = holder.getWorkerID();
             LOGGER.info("START SUCCESS USE ZK WORKERID-{}", workerId);
