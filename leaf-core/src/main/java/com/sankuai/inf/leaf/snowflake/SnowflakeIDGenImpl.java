@@ -17,31 +17,29 @@ public class SnowflakeIDGenImpl implements IDGen {
         return true;
     }
 
-    static private final Logger LOGGER = LoggerFactory.getLogger(SnowflakeIDGenImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SnowflakeIDGenImpl.class);
 
     private final long twepoch;
     private final long workerIdBits = 10L;
-    private final long maxWorkerId = -1L ^ (-1L << workerIdBits);//最大能够分配的workerid =1023
+    private final long maxWorkerId = ~(-1L << workerIdBits);//最大能够分配的workerid =1023
     private final long sequenceBits = 12L;
     private final long workerIdShift = sequenceBits;
     private final long timestampLeftShift = sequenceBits + workerIdBits;
-    private final long sequenceMask = -1L ^ (-1L << sequenceBits);
+    private final long sequenceMask = ~(-1L << sequenceBits);
     private long workerId;
     private long sequence = 0L;
     private long lastTimestamp = -1L;
-    public boolean initFlag = false;
     private static final Random RANDOM = new Random();
-    private int port;
 
     public SnowflakeIDGenImpl(String zkAddress, int port) {
-        //Thu Nov 04 2010 09:42:54 GMT+0800 (中国标准时间) 美团默认时间戳
+        //Thu Nov 04 2010 09:42:54 GMT+0800 (中国标准时间) 
         this(zkAddress, port, 1288834974657L);
     }
 
     /**
      * @param zkAddress zk地址
      * @param port      snowflake监听端口
-     * @param twepoch   我们定义的起始的时间戳，这样可以让时间戳存储时间更久
+     * @param twepoch   起始的时间戳
      */
     public SnowflakeIDGenImpl(String zkAddress, int port, long twepoch) {
         this.twepoch = twepoch;

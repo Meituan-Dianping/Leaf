@@ -156,6 +156,7 @@ public class SegmentIDGenImpl implements IDGen {
         } else if (buffer.getUpdateTimestamp() == 0) {
             leafAlloc = dao.updateMaxIdAndGetLeafAlloc(key);
             buffer.setUpdateTimestamp(System.currentTimeMillis());
+            buffer.setStep(leafAlloc.getStep());
             buffer.setMinStep(leafAlloc.getStep());//leafAlloc中的step为DB中的step
         } else {
             long duration = System.currentTimeMillis() - buffer.getUpdateTimestamp();

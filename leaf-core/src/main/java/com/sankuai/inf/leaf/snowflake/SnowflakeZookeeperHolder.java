@@ -74,8 +74,9 @@ public class SnowflakeZookeeperHolder {
                     //有自己的节点,zk_AddressNode=ip:port
                     zk_AddressNode = PATH_FOREVER + "/" + realNode.get(listenAddress);
                     workerID = workerid;//启动worder时使用会使用
-                    if (!checkInitTimeStamp(curator, zk_AddressNode))
+                    if (!checkInitTimeStamp(curator, zk_AddressNode)) {
                         throw new CheckLastTimeException("init timestamp check error,forever node timestamp gt this node time");
+                    }
                     //准备创建临时节点
                     doService(curator);
                     updateLocalWorkerID(workerID);
@@ -186,12 +187,12 @@ public class SnowflakeZookeeperHolder {
      * @param workerID
      */
     private void updateLocalWorkerID(int workerID) {
-        File LeafconfFile = new File(PROP_PATH.replace("{port}", port));
-        boolean exists = LeafconfFile.exists();
+        File leafConfFile = new File(PROP_PATH.replace("{port}", port));
+        boolean exists = leafConfFile.exists();
         LOGGER.info("file exists status is {}", exists);
         if (exists) {
             try {
-                FileUtils.writeStringToFile(LeafconfFile, "workerID=" + workerID, false);
+                FileUtils.writeStringToFile(leafConfFile, "workerID=" + workerID, false);
                 LOGGER.info("update file cache workerID is {}", workerID);
             } catch (IOException e) {
                 LOGGER.error("update file cache error ", e);
@@ -199,11 +200,11 @@ public class SnowflakeZookeeperHolder {
         } else {
             //不存在文件,父目录页肯定不存在
             try {
-                boolean mkdirs = LeafconfFile.getParentFile().mkdirs();
+                boolean mkdirs = leafConfFile.getParentFile().mkdirs();
                 LOGGER.info("init local file cache create parent dis status is {}, worker id is {}", mkdirs, workerID);
                 if (mkdirs) {
-                    if (LeafconfFile.createNewFile()) {
-                        FileUtils.writeStringToFile(LeafconfFile, "workerID=" + workerID, false);
+                    if (leafConfFile.createNewFile()) {
+                        FileUtils.writeStringToFile(leafConfFile, "workerID=" + workerID, false);
                         LOGGER.info("local file cache workerID is {}", workerID);
                     }
                 } else {
