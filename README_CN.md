@@ -110,3 +110,6 @@ insert into leaf_alloc(biz_tag, max_id, step, description) values('leaf-segment-
 ### Leaf Core
 
 当然，为了追求更高的性能，需要通过RPC Server来部署Leaf 服务，那仅需要引入leaf-core的包，把生成ID的API封装到指定的RPC框架中即可。
+
+### 注意事项
+注意现在leaf使用snowflake模式的情况下 其获取ip的逻辑直接取首个网卡ip【特别对于会更换ip的服务要注意】避免浪费workId
