@@ -118,11 +118,11 @@ leaf.snowflake.port=${port}
 
 In the leaf. The leaf that is configured in the properties. The snowflake. Zk. Address, configure the leaf service listen port leaf. Snowflake. Port.
 
-##### leaf Monitor Page
+### mini leaf Monitor Dashboard
 
 View the current number generation of each key,Them roughly mode: http://localhost:8080/cache
 
-### The Leaf to the Core
+### The Leaf with RPC
 
 Of course, in order to pursue higher performance, you need to deploy the Leaf service through RPC Server, which only needs to introduce the leaf-core package and encapsulate the API that generates the ID into the specified RPC framework.
 
