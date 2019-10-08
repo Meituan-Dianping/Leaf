@@ -19,7 +19,8 @@ You can use it to encapsulate a distributed unique id distribution center in a s
 ### Leaf Server
 
 Leaf provide an HTTP service based on spring boot to get the id
-#### USEAGE
+### USEAGE
+
 #### Segment MODE
 
 ##### 1.Create table on your MySQL server,SQL : 
@@ -40,6 +41,7 @@ insert into leaf_alloc(biz_tag, max_id, step, description) values('leaf-segment-
 ##### 2.build Leaf Server
 
 ```
+cd leaf
 git clone https://github.com/Meituan-Dianping/Leaf.git
 ```
 config your leaf.properties
@@ -58,7 +60,6 @@ leaf.snowflake.enable=false
 ```
 
 ```shell
-cd leaf
 mvn clean install -DskipTests
 cd leaf-server
 ```
@@ -75,7 +76,7 @@ OR
 ```shell
 sh deploy/run.sh
 ```
-##### GET ID
+###### enjoy
 
 ```shell
 #segment
@@ -101,7 +102,7 @@ Leaf Server configuration in the Leaf - Server/SRC/main/resources/Leaf. The prop
 | leaf.snowflake.port       | Service registration port under snowflake mode |        |
 
 
-### Snowflake model
+### Snowflake MODE
 
 The algorithm is taken from twitter's open-source snowflake algorithm.
 
