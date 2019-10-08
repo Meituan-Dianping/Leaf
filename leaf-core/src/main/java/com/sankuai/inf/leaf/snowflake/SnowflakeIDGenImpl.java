@@ -17,26 +17,37 @@ public class SnowflakeIDGenImpl implements IDGen {
         return true;
     }
 
-    static private final Logger LOGGER = LoggerFactory.getLogger(SnowflakeIDGenImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SnowflakeIDGenImpl.class);
 
-    private final long twepoch = 1288834974657L;
+    private final long twepoch;
     private final long workerIdBits = 10L;
-    private final long maxWorkerId = -1L ^ (-1L << workerIdBits);//最大能够分配的workerid =1023
+    private final long maxWorkerId = ~(-1L << workerIdBits);//最大能够分配的workerid =1023
     private final long sequenceBits = 12L;
     private final long workerIdShift = sequenceBits;
     private final long timestampLeftShift = sequenceBits + workerIdBits;
-    private final long sequenceMask = -1L ^ (-1L << sequenceBits);
+    private final long sequenceMask = ~(-1L << sequenceBits);
     private long workerId;
     private long sequence = 0L;
     private long lastTimestamp = -1L;
-    public boolean initFlag = false;
     private static final Random RANDOM = new Random();
-    private int port;
 
     public SnowflakeIDGenImpl(String zkAddress, int port) {
-        this.port = port;
-        SnowflakeZookeeperHolder holder = new SnowflakeZookeeperHolder(Utils.getIp(), String.valueOf(port), zkAddress);
-        initFlag = holder.init();
+        //Thu Nov 04 2010 09:42:54 GMT+0800 (中国标准时间) 
+        this(zkAddress, port, 1288834974657L);
+    }
+
+    /**
+     * @param zkAddress zk地址
+     * @param port      snowflake监听端口
+     * @param twepoch   起始的时间戳
+     */
+    public SnowflakeIDGenImpl(String zkAddress, int port, long twepoch) {
+        this.twepoch = twepoch;
+        Preconditions.checkArgument(timeGen() > twepoch, "Snowflake not support twepoch gt currentTime");
+        final String ip = Utils.getIp();
+        SnowflakeZookeeperHolder holder = new SnowflakeZookeeperHolder(ip, String.valueOf(port), zkAddress);
+        LOGGER.info("twepoch:{} ,ip:{} ,zkAddress:{} port:{}", twepoch, ip, zkAddress, port);
+        boolean initFlag = holder.init();
         if (initFlag) {
             workerId = holder.getWorkerID();
             LOGGER.info("START SUCCESS USE ZK WORKERID-{}", workerId);

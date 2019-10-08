@@ -124,3 +124,7 @@ View the current number generation of each key,Them roughly mode: http://localho
 ### The Leaf to the Core
 
 Of course, in order to pursue higher performance, you need to deploy the Leaf service through RPC Server, which only needs to introduce the leaf-core package and encapsulate the API that generates the ID into the specified RPC framework.
+
+#### 注意事项
+注意现在leaf使用snowflake模式的情况下 其获取ip的逻辑直接取首个网卡ip【特别对于会更换ip的服务要注意】避免浪费workId
+
