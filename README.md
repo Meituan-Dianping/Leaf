@@ -121,6 +121,6 @@ In the leaf. The leaf that is configured in the properties. The snowflake. Zk. A
 
 View the current number generation of each key,Them roughly mode: http://localhost:8080/cache
 
-### Tthe Leaf to the Core
+### The Leaf to the Core
 
 Of course, in order to pursue higher performance, you need to deploy the Leaf service through RPC Server, which only needs to introduce the leaf-core package and encapsulate the API that generates the ID into the specified RPC framework.
