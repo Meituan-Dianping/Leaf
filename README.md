@@ -19,9 +19,9 @@ You can use it to encapsulate a distributed unique id distribution center in a s
 ### Leaf Server
 
 Leaf provide an HTTP service based on spring boot to get the id
-### USEAGE
+## USEAGE
 
-#### Segment MODE
+### Segment MODE
 
 ##### 1.Create table on your MySQL server,SQL : 
 
