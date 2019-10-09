@@ -10,6 +10,7 @@
     <modules>
         <module>leaf-core</module>
         <module>leaf-server</module>
+        <module>leaf-plugin</module>
     </modules>
     <description>Distributed ID Generate Service</description>
     <developers>
@@ -136,6 +137,11 @@
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-core</artifactId>
                 <version>${log4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot</artifactId>
+                <version>2.0.3.RELEASE</version>
             </dependency>
             <dependency>
                 <groupId>mysql</groupId>
