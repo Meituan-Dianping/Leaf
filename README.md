@@ -18,7 +18,7 @@ You can use it to encapsulate a distributed unique id distribution center in a s
 
 ### Leaf Server
 
-Leaf provide an HTTP service based on spring boot to get the id
+Leaf provides an HTTP service based on spring boot to get the id
 
 #### run Leaf Server
 
@@ -57,24 +57,24 @@ curl http://localhost:8080/api/snowflake/get/test
 
 Leaf provides two ways to generate ids (segment mode and snowflake mode), which you can turn on at the same time or specify one way to turn on (both are off by default).
 
-Leaf Server configuration in the Leaf - Server/SRC/main/resources/Leaf. The properties
+Leaf Server configuration is in the leaf-server/src/main/resources/leaf.properties
 
-| config                    | meaning                          | default |
+| configuration             | meaning                          | default |
 | ------------------------- | ----------------------------- | ------ |
-| leaf.name                 | leaf server name                  |        |
-| leaf.segment.enable       | Whether segment mode is enabled             | false  |
+| leaf.name                 | leaf service name                  |        |
+| leaf.segment.enable       | whether segment mode is enabled             | false  |
 | leaf.jdbc.url             | mysql url                 |        |
 | leaf.jdbc.username        | mysql username                 |        |
 | leaf.jdbc.password        | mysql password                   |        |
-| leaf.snowflake.enable     | Whether snowflke mode is enabled         | false  |
-| leaf.snowflake.zk.address | Zk address in snowflake mode      |        |
-| leaf.snowflake.port       | Service registration port under snowflake mode |        |
+| leaf.snowflake.enable     | whether snowflake mode is enabled         | false  |
+| leaf.snowflake.zk.address | zk address under snowflake mode      |        |
+| leaf.snowflake.port       | service registration port under snowflake mode |        |
 
 ### Segment mode 
 
-In order to use segment mode, you need to create table first, and configure leaf.jdbc.url, leaf.jdbc.username, leaf.jdbc.password
+In order to use segment mode, you need to create DB table first, and configure leaf.jdbc.url, leaf.jdbc.username, leaf.jdbc.password
 
-If you do not want use it, just configure leaf.segment.enable=false.
+If you do not want use it, just configure leaf.segment.enable=false to disable it.
 
 ```sql
 CREATE DATABASE leaf
@@ -93,7 +93,7 @@ insert into leaf_alloc(biz_tag, max_id, step, description) values('leaf-segment-
 
 The algorithm is taken from twitter's open-source snowflake algorithm.
 
-If you do not want to use it, just configure leaf.snowflake.enable=false.
+If you do not want to use it, just configure leaf.snowflake.enable=false to disable it.
 
 Configure the zookeeper address
 
@@ -105,11 +105,11 @@ leaf.snowflake.port=${port}
 
 configure leaf.snowflake.zk.address in the leaf.properties, and configure the leaf service listen port leaf.snowflake.port.
 
-### mini leaf Monitor Dashboard
+### monitor page
 
-View the current number generation of each key,Them roughly mode: http://localhost:8080/cache
+segment mode: http://localhost:8080/cache
 
-### The Leaf with RPC
+### Leaf Core 
 
 Of course, in order to pursue higher performance, you need to deploy the Leaf service through RPC Server, which only needs to introduce the leaf-core package and encapsulate the API that generates the ID into the specified RPC framework.
 
