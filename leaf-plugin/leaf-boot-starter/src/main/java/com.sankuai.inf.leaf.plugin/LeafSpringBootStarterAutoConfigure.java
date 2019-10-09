@@ -9,6 +9,8 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.sql.SQLException;
+
 /**
  * @author zhaodong.xzd (github.com/yaccc)
  * @date 2019/10/09
@@ -21,8 +23,9 @@ public class LeafSpringBootStarterAutoConfigure {
     private LeafSpringBootProperties properties;
     @Bean
     @ConditionalOnProperty(prefix = "leaf.segment",value = "enable",matchIfMissing = false)
-    public SegmentService initLeafSegmentStarter(){
-        return null;
+    public SegmentService initLeafSegmentStarter() throws InitException, SQLException {
+        SegmentService segmentService=new SegmentService();
+        return segmentService;
     }
 
     @Bean
