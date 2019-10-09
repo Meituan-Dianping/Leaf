@@ -19,11 +19,62 @@ You can use it to encapsulate a distributed unique id distribution center in a s
 ### Leaf Server
 
 Leaf provide an HTTP service based on spring boot to get the id
-## Usage 
+
+#### run Leaf Server
+
+##### build
+
+```shell
+cd leaf
+mvn clean install -DskipTests
+cd leaf-server
+```
+
+##### run
+###### maven
+
+```shell
+mvn spring-boot:run
+```
+
+or 
+###### shell command
+
+```shell
+sh deploy/run.sh
+```
+
+##### test
+
+```shell
+#segment
+curl http://localhost:8080/api/segment/get/leaf-segment-test
+#snowflake
+curl http://localhost:8080/api/snowflake/get/test
+```
+
+#### Configuration
+
+Leaf provides two ways to generate ids (segment mode and snowflake mode), which you can turn on at the same time or specify one way to turn on (both are off by default).
+
+Leaf Server configuration in the Leaf - Server/SRC/main/resources/Leaf. The properties
+
+| config                    | meaning                          | default |
+| ------------------------- | ----------------------------- | ------ |
+| leaf.name                 | leaf server name                  |        |
+| leaf.segment.enable       | Whether segment mode is enabled             | false  |
+| leaf.jdbc.url             | mysql url                 |        |
+| leaf.jdbc.username        | mysql username                 |        |
+| leaf.jdbc.password        | mysql password                   |        |
+| leaf.snowflake.enable     | Whether snowflke mode is enabled         | false  |
+| leaf.snowflake.zk.address | Zk address in snowflake mode      |        |
+| leaf.snowflake.port       | Service registration port under snowflake mode |        |
 
 ### Segment mode 
 
-##### 1.Create table on your MySQL server, SQL: 
+In order to use segment mode, you need to create table first, and configure leaf.jdbc.url, leaf.jdbc.username, leaf.jdbc.password
+
+If you do not want use it, just configure leaf.segment.enable=false.
 
 ```sql
 CREATE DATABASE leaf
@@ -38,74 +89,11 @@ CREATE TABLE `leaf_alloc` (
 
 insert into leaf_alloc(biz_tag, max_id, step, description) values('leaf-segment-test', 1, 2000, 'Test leaf Segment Mode Get Id')
 ```
-##### 2.Build Leaf Server
-
-```
-cd leaf
-git clone https://github.com/Meituan-Dianping/Leaf.git
-```
-config your leaf.properties
-
-```
-leaf.name=com.sankuai.leaf.opensource.test
-leaf.segment.enable=false
-leaf.jdbc.url=
-leaf.jdbc.username=
-leaf.jdbc.password=
-
-leaf.snowflake.enable=false
-leaf.snowflake.zk.address=
-leaf.snowflake.port=
-```
-
-```shell
-mvn clean install -DskipTests
-cd leaf-server
-```
-
-##### 3.Run it 
-###### maven
-
-```shell
-mvn spring-boot:run
-```
-OR
-###### shell command
-
-```shell
-sh deploy/run.sh
-```
-###### enjoy
-
-```shell
-#segment
-curl http://localhost:8080/api/segment/get/leaf-segment-test
-#snowflake
-curl http://localhost:8080/api/snowflake/get/test
-```
-#### Config description 
-
-Leaf provides two ways to generate ids (segment mode and snowflake mode), which you can turn on at the same time or specify one way to turn on (both are off by default).
-
-Leaf Server configuration in the Leaf - Server/SRC/main/resources/Leaf. The properties
-
-| config                    | meaning                          | default |
-| ------------------------- | ----------------------------- | ------ |
-| leaf.name                 | leaf server name                  |        |
-| leaf.segment.enable       | Whether segment mode is enabled             | false  |
-| leaf.jdbc.url             | mysql url                 |        |
-| leaf.jdbc.username        | mysql username                 |        |
-| leaf.jdbc.password        | mysql password                   |        |
-| leaf.snowflake.enable     | Whether snowflke mode is enabled         | false  |
-| leaf.snowflake.zk.address |Zk address in snowflake mode      |        |
-| leaf.snowflake.port       | Service registration port under snowflake mode |        |
-
-
 ### Snowflake mode 
 
 The algorithm is taken from twitter's open-source snowflake algorithm.
 
-If you do not want to configure leaf.snowflake. Enable =false with this mode.
+If you do not want to use it, just configure leaf.snowflake.enable=false.
 
 Configure the zookeeper address
 
@@ -115,7 +103,7 @@ leaf.snowflake.enable=true
 leaf.snowflake.port=${port}
 ```
 
-In the leaf. The leaf that is configured in the properties. The snowflake. Zk. Address, configure the leaf service listen port leaf. Snowflake. Port.
+configure leaf.snowflake.zk.address in the leaf.properties, and configure the leaf service listen port leaf.snowflake.port.
 
 ### mini leaf Monitor Dashboard
 
