@@ -1,15 +1,10 @@
 package com.sankuai.inf.leaf.plugin;
 
-import com.sankuai.inf.leaf.server.exception.InitException;
-import com.sankuai.inf.leaf.server.service.SegmentService;
-import com.sankuai.inf.leaf.server.service.SnowflakeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import java.sql.SQLException;
 
 /**
  * @author zhaodong.xzd (github.com/yaccc)
@@ -23,15 +18,15 @@ public class LeafSpringBootStarterAutoConfigure {
     private LeafSpringBootProperties properties;
     @Bean
     @ConditionalOnProperty(prefix = "leaf.segment",value = "enable",matchIfMissing = false)
-    public SegmentService initLeafSegmentStarter() throws InitException, SQLException {
-        SegmentService segmentService=new SegmentService();
-        return segmentService;
+    public Void initLeafSegmentStarter(){
+
+        return null;
     }
 
     @Bean
     @ConditionalOnProperty(prefix = "leaf.snowflake",value = "enable",matchIfMissing = false)
-    public SnowflakeService initLeafSnowflakeStarter() throws InitException {
-        SnowflakeService snowflakeService =new SnowflakeService();
-        return snowflakeService;
+    public Void initLeafSnowflakeStarter(){
+
+        return null;
     }
 }

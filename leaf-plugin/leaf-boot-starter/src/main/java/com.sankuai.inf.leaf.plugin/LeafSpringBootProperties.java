@@ -7,7 +7,7 @@ import org.springframework.context.annotation.PropertySource;
  * @author zhaodong.xzd (github.com/yaccc)
  * @date 2019/10/09
  */
-@ConfigurationProperties(prefix = "leaf")
+@ConfigurationProperties("leaf")
 @PropertySource("classpath:leaf.properties")
 public class LeafSpringBootProperties {
 
