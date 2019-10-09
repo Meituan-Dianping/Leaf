@@ -19,11 +19,11 @@ You can use it to encapsulate a distributed unique id distribution center in a s
 ### Leaf Server
 
 Leaf provide an HTTP service based on spring boot to get the id
-## USEAGE
+## Usage 
 
-### Segment MODE
+### Segment mode 
 
-##### 1.Create table on your MySQL server,SQL : 
+##### 1.Create table on your MySQL server, SQL: 
 
 ```sql
 CREATE DATABASE leaf
@@ -38,7 +38,7 @@ CREATE TABLE `leaf_alloc` (
 
 insert into leaf_alloc(biz_tag, max_id, step, description) values('leaf-segment-test', 1, 2000, 'Test leaf Segment Mode Get Id')
 ```
-##### 2.build Leaf Server
+##### 2.Build Leaf Server
 
 ```
 cd leaf
@@ -54,9 +54,8 @@ leaf.jdbc.username=
 leaf.jdbc.password=
 
 leaf.snowflake.enable=false
-#leaf.snowflake.zk.address=
-#leaf.snowflake.port=
-© 2019 GitHub, Inc.
+leaf.snowflake.zk.address=
+leaf.snowflake.port=
 ```
 
 ```shell
@@ -64,7 +63,7 @@ mvn clean install -DskipTests
 cd leaf-server
 ```
 
-##### 3.RUN IT
+##### 3.Run it 
 ###### maven
 
 ```shell
@@ -84,7 +83,7 @@ curl http://localhost:8080/api/segment/get/leaf-segment-test
 #snowflake
 curl http://localhost:8080/api/snowflake/get/test
 ```
-#### Config DESC
+#### Config description 
 
 Leaf provides two ways to generate ids (segment mode and snowflake mode), which you can turn on at the same time or specify one way to turn on (both are off by default).
 
@@ -102,7 +101,7 @@ Leaf Server configuration in the Leaf - Server/SRC/main/resources/Leaf. The prop
 | leaf.snowflake.port       | Service registration port under snowflake mode |        |
 
 
-### Snowflake MODE
+### Snowflake mode 
 
 The algorithm is taken from twitter's open-source snowflake algorithm.
 
