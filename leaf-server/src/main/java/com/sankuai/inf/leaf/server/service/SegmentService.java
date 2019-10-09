@@ -12,7 +12,6 @@ import com.sankuai.inf.leaf.server.Constants;
 import com.sankuai.inf.leaf.server.exception.InitException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
 import java.util.Properties;
