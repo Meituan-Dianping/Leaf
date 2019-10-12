@@ -18,14 +18,14 @@ import java.util.Properties;
 
 public class SegmentService {
     private Logger logger = LoggerFactory.getLogger(SegmentService.class);
-    IDGen idGen;
-    DruidDataSource dataSource;
+
+    private IDGen idGen;
+    private DruidDataSource dataSource;
+
     public SegmentService() throws SQLException, InitException {
         Properties properties = PropertyFactory.getProperties();
         boolean flag = Boolean.parseBoolean(properties.getProperty(Constants.LEAF_SEGMENT_ENABLE, "true"));
         if (flag) {
-
-
             // Config dataSource
             dataSource = new DruidDataSource();
             dataSource.setUrl(properties.getProperty(Constants.LEAF_JDBC_URL));
@@ -49,9 +49,11 @@ public class SegmentService {
             logger.info("Zero ID Gen Service Init Successfully");
         }
     }
+
     public Result getId(String key) {
         return idGen.get(key);
     }
+
     public SegmentIDGenImpl getIdGen() {
         if (idGen instanceof SegmentIDGenImpl) {
             return (SegmentIDGenImpl) idGen;
