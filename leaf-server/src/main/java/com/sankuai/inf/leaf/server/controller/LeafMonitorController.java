@@ -1,16 +1,15 @@
 package com.sankuai.inf.leaf.server.controller;
 
 import com.sankuai.inf.leaf.segment.SegmentIDGenImpl;
-import com.sankuai.inf.leaf.server.model.SegmentBufferView;
 import com.sankuai.inf.leaf.segment.model.LeafAlloc;
 import com.sankuai.inf.leaf.segment.model.SegmentBuffer;
+import com.sankuai.inf.leaf.server.model.SegmentBufferView;
 import com.sankuai.inf.leaf.server.service.SegmentService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -71,12 +70,12 @@ public class LeafMonitorController {
         return "db";
     }
 
-    /**
+    /*
      * the output is like this:
      * {
-     *   "timestamp": "1567733700834(2019-09-06 09:35:00.834)",
-     *   "sequenceId": "3448",
-     *   "workerId": "39"
+     * "timestamp": "1567733700834(2019-09-06 09:35:00.834)",
+     * "sequenceId": "3448",
+     * "workerId": "39"
      * }
      */
     @RequestMapping(value = "decodeSnowflakeId")

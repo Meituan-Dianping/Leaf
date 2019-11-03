@@ -1,39 +1,57 @@
+/*
+ * Copyright 2016-2018 LEAF.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.sankuai.inf.leaf.segment;
 
 import com.sankuai.inf.leaf.IDGen;
 import com.sankuai.inf.leaf.common.Result;
 import com.sankuai.inf.leaf.common.Status;
 import com.sankuai.inf.leaf.segment.dao.IDAllocDao;
-import com.sankuai.inf.leaf.segment.model.*;
+import com.sankuai.inf.leaf.segment.model.LeafAlloc;
+import com.sankuai.inf.leaf.segment.model.Segment;
+import com.sankuai.inf.leaf.segment.model.SegmentBuffer;
 import org.perf4j.StopWatch;
 import org.perf4j.slf4j.Slf4JStopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class SegmentIDGenImpl implements IDGen {
     private static final Logger logger = LoggerFactory.getLogger(SegmentIDGenImpl.class);
 
-    /**
+    /*
      * IDCache未初始化成功时的异常码
      */
     private static final long EXCEPTION_ID_IDCACHE_INIT_FALSE = -1;
-    /**
+    /*
      * key不存在时的异常码
      */
     private static final long EXCEPTION_ID_KEY_NOT_EXISTS = -2;
-    /**
+    /*
      * SegmentBuffer中的两个Segment均未从DB中装载时的异常码
      */
     private static final long EXCEPTION_ID_TWO_SEGMENTS_ARE_NULL = -3;
-    /**
+    /*
      * 最大步长不超过100,0000
      */
     private static final int MAX_STEP = 1000000;
-    /**
+    /*
      * 一个Segment维持时间为15分钟
      */
     private static final long SEGMENT_DURATION = 15 * 60 * 1000L;
@@ -172,7 +190,7 @@ public class SegmentIDGenImpl implements IDGen {
             } else {
                 nextStep = nextStep / 2 >= buffer.getMinStep() ? nextStep / 2 : nextStep;
             }
-            logger.info("leafKey[{}], step[{}], duration[{}mins], nextStep[{}]", key, buffer.getStep(), String.format("%.2f",((double)duration / (1000 * 60))), nextStep);
+            logger.info("leafKey[{}], step[{}], duration[{}mins], nextStep[{}]", key, buffer.getStep(), String.format("%.2f", ((double) duration / (1000 * 60))), nextStep);
             LeafAlloc temp = new LeafAlloc();
             temp.setKey(key);
             temp.setStep(nextStep);
@@ -251,12 +269,12 @@ public class SegmentIDGenImpl implements IDGen {
         int roll = 0;
         while (buffer.getThreadRunning().get()) {
             roll += 1;
-            if(roll > 10000) {
+            if (roll > 10000) {
                 try {
                     TimeUnit.MILLISECONDS.sleep(10);
                     break;
                 } catch (InterruptedException e) {
-                    logger.warn("Thread {} Interrupted",Thread.currentThread().getName());
+                    logger.warn("Thread {} Interrupted", Thread.currentThread().getName());
                     break;
                 }
             }

@@ -1,20 +1,33 @@
+/*
+ * Copyright 2016-2018 LEAF.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.sankuai.inf.leaf.snowflake;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Maps;
+import com.sankuai.inf.leaf.common.PropertyFactory;
 import com.sankuai.inf.leaf.snowflake.exception.CheckLastTimeException;
 import org.apache.commons.io.FileUtils;
+import org.apache.curator.RetryPolicy;
 import org.apache.curator.framework.CuratorFramework;
+import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.RetryUntilElapsed;
+import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.data.Stat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.Maps;
-import com.sankuai.inf.leaf.common.*;
-import org.apache.curator.RetryPolicy;
-import org.apache.curator.framework.CuratorFrameworkFactory;
-import org.apache.zookeeper.CreateMode;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -135,7 +148,7 @@ public class SnowflakeZookeeperHolder {
         return !(endPoint.getTimestamp() > System.currentTimeMillis());
     }
 
-    /**
+    /*
      * 创建持久顺序节点 ,并把节点数据放入 value
      *
      * @param curator
@@ -163,7 +176,7 @@ public class SnowflakeZookeeperHolder {
         }
     }
 
-    /**
+    /*
      * 构建需要上传的数据
      *
      * @return
@@ -181,7 +194,7 @@ public class SnowflakeZookeeperHolder {
         return endpoint;
     }
 
-    /**
+    /*
      * 在节点文件系统上缓存一个workid值,zk失效,机器重启时保证能够正常启动
      *
      * @param workerID
@@ -224,7 +237,7 @@ public class SnowflakeZookeeperHolder {
                 .build();
     }
 
-    /**
+    /*
      * 上报数据结构
      */
     static class Endpoint {
