@@ -25,6 +25,7 @@ Leaf provides an HTTP service based on spring boot to get the id
 ##### build
 
 ```shell
+git clone git@github.com:Meituan-Dianping/Leaf.git
 cd leaf
 mvn clean install -DskipTests
 cd leaf-server
