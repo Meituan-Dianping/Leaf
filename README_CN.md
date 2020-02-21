@@ -25,6 +25,7 @@ Leaf 最早期需求是各个业务线的订单ID生成需求。在美团早期�
 ##### 打包服务
 
 ```shell
+git clone git@github.com:Meituan-Dianping/Leaf.git
 cd leaf
 mvn clean install -DskipTests
 cd leaf-server
