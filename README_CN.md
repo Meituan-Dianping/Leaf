@@ -20,37 +20,7 @@ Leaf 最早期需求是各个业务线的订单ID生成需求。在美团早期�
 
 我们提供了一个基于spring boot的HTTP服务来获取ID
 
-#### 运行Leaf Server
 
-##### 打包服务
-
-```shell
-git clone git@github.com:Meituan-Dianping/Leaf.git
-cd leaf
-mvn clean install -DskipTests
-cd leaf-server
-```
-
-##### 运行服务
-###### mvn方式
-
-```shell
-mvn spring-boot:run
-```
-
-###### 脚本方式
-
-```shell
-sh deploy/run.sh
-```
-##### 测试
-
-```shell
-#segment
-curl http://localhost:8080/api/segment/get/leaf-segment-test
-#snowflake
-curl http://localhost:8080/api/snowflake/get/test
-```
 #### 配置介绍
 
 Leaf 提供两种生成的ID的方式（号段模式和snowflake模式），你可以同时开启两种方式，也可以指定开启某种方式（默认两种方式为关闭状态）。
@@ -103,6 +73,40 @@ insert into leaf_alloc(biz_tag, max_id, step, description) values('leaf-segment-
 ##### 配置zookeeper地址
 
 在leaf.properties中配置leaf.snowflake.zk.address，配置leaf 服务监听的端口leaf.snowflake.port。
+#### 运行Leaf Server
+
+##### 打包服务
+
+```shell
+git clone git@github.com:Meituan-Dianping/Leaf.git
+//按照上面的号段模式在工程里面配置好
+cd leaf
+mvn clean install -DskipTests
+cd leaf-server
+```
+
+##### 运行服务
+
+*注意:首先得先配置好数据库表或者zk地址*
+###### mvn方式
+
+```shell
+mvn spring-boot:run
+```
+
+###### 脚本方式
+
+```shell
+sh deploy/run.sh
+```
+##### 测试
+
+```shell
+#segment
+curl http://localhost:8080/api/segment/get/leaf-segment-test
+#snowflake
+curl http://localhost:8080/api/snowflake/get/test
+```
 
 ##### 监控页面
 
