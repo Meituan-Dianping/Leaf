@@ -4,7 +4,6 @@ import com.sankuai.inf.leaf.exception.InitException;
 import com.sankuai.inf.leaf.service.SegmentService;
 import com.sankuai.inf.leaf.service.SnowflakeService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,17 +18,22 @@ import org.springframework.context.annotation.Configuration;
 public class LeafSpringBootStarterAutoConfigure {
     @Autowired
     private LeafSpringBootProperties properties;
+
     @Bean
-    @ConditionalOnProperty(prefix = "leaf.segment",value = "enable",matchIfMissing = false)
-    public SegmentService initLeafSegmentStarter() throws Exception{
-        SegmentService segmentService=new SegmentService();
-        return segmentService;
+    public SegmentService initLeafSegmentStarter() throws Exception {
+        if (properties != null && properties.getSegment() != null && properties.getSegment().isEnable()) {
+            SegmentService segmentService = new SegmentService();
+            return segmentService;
+        }
+        return null;
     }
 
     @Bean
-    @ConditionalOnProperty(prefix = "leaf.snowflake",value = "enable",matchIfMissing = false)
     public SnowflakeService initLeafSnowflakeStarter() throws InitException {
-        SnowflakeService snowflakeService =new SnowflakeService();
-        return snowflakeService;
+        if (properties != null && properties.getSegment() != null && properties.getSegment().isEnable()) {
+            SnowflakeService snowflakeService = new SnowflakeService();
+            return snowflakeService;
+        }
+        return null;
     }
 }

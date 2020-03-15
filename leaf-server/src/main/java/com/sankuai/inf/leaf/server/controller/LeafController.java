@@ -2,8 +2,6 @@ package com.sankuai.inf.leaf.server.controller;
 
 import com.sankuai.inf.leaf.common.Result;
 import com.sankuai.inf.leaf.common.Status;
-import com.sankuai.inf.leaf.exception.LeafServerException;
-import com.sankuai.inf.leaf.exception.NoKeyException;
 import com.sankuai.inf.leaf.service.SegmentService;
 import com.sankuai.inf.leaf.service.SnowflakeService;
 import org.slf4j.Logger;
