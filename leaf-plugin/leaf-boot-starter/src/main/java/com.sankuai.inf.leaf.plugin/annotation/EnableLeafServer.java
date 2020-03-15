@@ -4,7 +4,6 @@ import com.sankuai.inf.leaf.plugin.LeafSpringBootStarterAutoConfigure;
 import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.*;
-
 /**
  * @author zhaodong.xzd (github.com/yaccc)
  * @date 2019/10/09
