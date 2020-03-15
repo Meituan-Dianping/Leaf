@@ -21,8 +21,9 @@ public class LeafSpringBootStarterAutoConfigure {
     private LeafSpringBootProperties properties;
     @Bean
     @ConditionalOnProperty(prefix = "leaf.segment",value = "enable",matchIfMissing = false)
-    public SegmentService initLeafSegmentStarter(){
-        return null;
+    public SegmentService initLeafSegmentStarter() throws Exception{
+        SegmentService segmentService=new SegmentService();
+        return segmentService;
     }
 
     @Bean
