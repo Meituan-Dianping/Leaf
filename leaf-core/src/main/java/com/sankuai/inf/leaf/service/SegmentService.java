@@ -1,11 +1,9 @@
 package com.sankuai.inf.leaf.service;
 
 import com.alibaba.druid.pool.DruidDataSource;
-import com.sankuai.inf.leaf.Constants;
+import com.google.common.base.Preconditions;
 import com.sankuai.inf.leaf.IDGen;
-import com.sankuai.inf.leaf.common.PropertyFactory;
 import com.sankuai.inf.leaf.common.Result;
-import com.sankuai.inf.leaf.common.ZeroIDGen;
 import com.sankuai.inf.leaf.exception.InitException;
 import com.sankuai.inf.leaf.segment.SegmentIDGenImpl;
 import com.sankuai.inf.leaf.segment.dao.IDAllocDao;
@@ -14,7 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.SQLException;
-import java.util.Properties;
 
 public class SegmentService {
     private Logger logger = LoggerFactory.getLogger(SegmentService.class);
@@ -22,31 +19,26 @@ public class SegmentService {
     private IDGen idGen;
     private DruidDataSource dataSource;
 
-    public SegmentService() throws SQLException, InitException {
-        Properties properties = PropertyFactory.getProperties();
-        boolean flag = Boolean.parseBoolean(properties.getProperty(Constants.LEAF_SEGMENT_ENABLE, "true"));
-        if (flag) {
-            // Config dataSource
-            dataSource = new DruidDataSource();
-            dataSource.setUrl(properties.getProperty(Constants.LEAF_JDBC_URL));
-            dataSource.setUsername(properties.getProperty(Constants.LEAF_JDBC_USERNAME));
-            dataSource.setPassword(properties.getProperty(Constants.LEAF_JDBC_PASSWORD));
-            dataSource.init();
+    public SegmentService(String url, String username, String pwd) throws SQLException, InitException {
+        Preconditions.checkNotNull(url,"database url can not be null");
+        Preconditions.checkNotNull(username,"username can not be null");
+        Preconditions.checkNotNull(pwd,"password can not be null");
+        // Config dataSource
+        dataSource = new DruidDataSource();
+        dataSource.setUrl(url);
+        dataSource.setUsername(username);
+        dataSource.setPassword(pwd);
+        dataSource.init();
+        // Config Dao
+        IDAllocDao dao = new IDAllocDaoImpl(dataSource);
 
-            // Config Dao
-            IDAllocDao dao = new IDAllocDaoImpl(dataSource);
-
-            // Config ID Gen
-            idGen = new SegmentIDGenImpl();
-            ((SegmentIDGenImpl) idGen).setDao(dao);
-            if (idGen.init()) {
-                logger.info("Segment Service Init Successfully");
-            } else {
-                throw new InitException("Segment Service Init Fail");
-            }
+        // Config ID Gen
+        idGen = new SegmentIDGenImpl();
+        ((SegmentIDGenImpl) idGen).setDao(dao);
+        if (idGen.init()) {
+            logger.info("Segment Service Init Successfully");
         } else {
-            idGen = new ZeroIDGen();
-            logger.info("Zero ID Gen Service Init Successfully");
+            throw new InitException("Segment Service Init Fail");
         }
     }
 

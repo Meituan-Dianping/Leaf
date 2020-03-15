@@ -17,6 +17,34 @@ public class LeafSpringBootProperties {
     private Snowflake snowflake;
     public static class Segment{
         private boolean enable=false;
+        private String url;
+        private String username;
+        private String password;
+
+        public String getUrl() {
+            return url;
+        }
+
+        public void setUrl(String url) {
+            this.url = url;
+        }
+
+        public String getUsername() {
+            return username;
+        }
+
+        public void setUsername(String username) {
+            this.username = username;
+        }
+
+        public String getPassword() {
+            return password;
+        }
+
+        public void setPassword(String password) {
+            this.password = password;
+        }
+
         public boolean isEnable() {
             return enable;
         }
@@ -33,6 +61,24 @@ public class LeafSpringBootProperties {
     }
     public static class Snowflake{
         private boolean enable =false;
+        private String address;
+        private int port;
+        public String getAddress() {
+            return address;
+        }
+
+        public void setAddress(String address) {
+            this.address = address;
+        }
+
+        public int getPort() {
+            return port;
+        }
+
+        public void setPort(int port) {
+            this.port = port;
+        }
+
         public boolean isEnable() {
             return enable;
         }
