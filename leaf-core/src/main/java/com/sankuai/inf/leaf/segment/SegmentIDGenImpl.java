@@ -93,11 +93,16 @@ public class SegmentIDGenImpl implements IDGen {
                 return;
             }
             List<String> cacheTags = new ArrayList<String>(cache.keySet());
-            List<String> insertTags = new ArrayList<String>(dbTags);
-            List<String> removeTags = new ArrayList<String>(cacheTags);
+            Set<String> insertTagsSet = new HashSet<>(dbTags);
+            Set<String> removeTagsSet = new HashSet<>(cacheTags);
             //db中新加的tags灌进cache
-            insertTags.removeAll(cacheTags);
-            for (String tag : insertTags) {
+            for(int i = 0; i < cacheTags.size(); i++){
+                String tmp = cacheTags.get(i);
+                if(insertTagsSet.contains(tmp)){
+                    insertTagsSet.remove(tmp);
+                }
+            }
+            for (String tag : insertTagsSet) {
                 SegmentBuffer buffer = new SegmentBuffer();
                 buffer.setKey(tag);
                 Segment segment = buffer.getCurrent();
@@ -108,8 +113,13 @@ public class SegmentIDGenImpl implements IDGen {
                 logger.info("Add tag {} from db to IdCache, SegmentBuffer {}", tag, buffer);
             }
             //cache中已失效的tags从cache删除
-            removeTags.removeAll(dbTags);
-            for (String tag : removeTags) {
+            for(int i = 0; i < dbTags.size(); i++){
+                String tmp = dbTags.get(i);
+                if(removeTagsSet.contains(tmp)){
+                    removeTagsSet.remove(tmp);
+                }
+            }
+            for (String tag : removeTagsSet) {
                 cache.remove(tag);
                 logger.info("Remove tag {} from IdCache", tag);
             }
