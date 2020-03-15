@@ -31,7 +31,6 @@ public class SegmentService {
         dataSource.init();
         // Config Dao
         IDAllocDao dao = new IDAllocDaoImpl(dataSource);
-
         // Config ID Gen
         idGen = new SegmentIDGenImpl();
         ((SegmentIDGenImpl) idGen).setDao(dao);
