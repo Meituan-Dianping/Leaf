@@ -1,15 +1,14 @@
-package com.sankuai.inf.leaf.server.service;
+package com.sankuai.inf.leaf.service;
 
+import com.sankuai.inf.leaf.Constants;
 import com.sankuai.inf.leaf.IDGen;
 import com.sankuai.inf.leaf.common.PropertyFactory;
 import com.sankuai.inf.leaf.common.Result;
 import com.sankuai.inf.leaf.common.ZeroIDGen;
-import com.sankuai.inf.leaf.server.Constants;
-import com.sankuai.inf.leaf.server.exception.InitException;
+import com.sankuai.inf.leaf.exception.InitException;
 import com.sankuai.inf.leaf.snowflake.SnowflakeIDGenImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 
 import java.util.Properties;
 

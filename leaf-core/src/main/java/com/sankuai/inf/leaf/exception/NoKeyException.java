@@ -1,4 +1,4 @@
-package com.sankuai.inf.leaf.server.exception;
+package com.sankuai.inf.leaf.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

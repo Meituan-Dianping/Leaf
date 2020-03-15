@@ -1,8 +1,8 @@
 package com.sankuai.inf.leaf.plugin;
 
-import com.sankuai.inf.leaf.server.exception.InitException;
-import com.sankuai.inf.leaf.server.service.SegmentService;
-import com.sankuai.inf.leaf.server.service.SnowflakeService;
+import com.sankuai.inf.leaf.exception.InitException;
+import com.sankuai.inf.leaf.service.SegmentService;
+import com.sankuai.inf.leaf.service.SnowflakeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;

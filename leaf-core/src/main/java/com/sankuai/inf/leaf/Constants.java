@@ -1,4 +1,4 @@
-package com.sankuai.inf.leaf.server;
+package com.sankuai.inf.leaf;
 
 public class Constants {
     public static final String LEAF_SEGMENT_ENABLE = "leaf.segment.enable";

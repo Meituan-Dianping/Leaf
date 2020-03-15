@@ -13,19 +13,8 @@
     <dependencies>
         <dependency>
             <groupId>com.sankuai.inf.leaf</groupId>
-            <artifactId>leaf-server</artifactId>
+            <artifactId>leaf-core</artifactId>
             <version>1.0.1</version>
-        </dependency>
-        <dependency>
-            <groupId>com.sankuai.inf.leaf</groupId>
-            <artifactId>leaf-server</artifactId>
-            <version>1.0.1</version>
-        </dependency>
-        <dependency>
-            <groupId>com.sankuai.inf.leaf</groupId>
-            <artifactId>leaf-server</artifactId>
-            <version>1.0.1</version>
-            <scope>compile</scope>
         </dependency>
     </dependencies>
 </project>
