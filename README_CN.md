@@ -19,7 +19,9 @@ Leaf 最早期需求是各个业务线的订单ID生成需求。在美团早期�
 ### 使用leaf-starter注解来启动leaf
 
 ```shell script
- cd leaf
+git clone git@github.com:Meituan-Dianping/Leaf.git
+git checkout feature/spring-boot-starter
+cd leaf
 mvn clean install -Dmaven.test.skip=true 
 ```
 #### 引入依赖
