@@ -66,6 +66,9 @@ public class T {
 
 TIPS:后续会将jar包上传的maven仓库
 
+### 使用注解启动leaf
+https://github.com/Meituan-Dianping/Leaf/blob/feature/spring-boot-starter/README_CN.md
+
 ### Leaf Server
 
 我们提供了一个基于spring boot的HTTP服务来获取ID
