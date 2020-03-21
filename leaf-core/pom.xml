@@ -4,12 +4,12 @@
     <parent>
         <groupId>com.sankuai.inf.leaf</groupId>
         <artifactId>leaf-parent</artifactId>
-        <version>1.0.1</version>
+        <version>1.0.1-RELEASE</version>
     </parent>
     <groupId>com.sankuai.inf.leaf</groupId>
     <artifactId>leaf-core</artifactId>
     <packaging>jar</packaging>
-    <version>1.0.1</version>
+    <version>1.0.1-RELEASE</version>
     <name>leaf-core</name>
     <properties>
         <mysql-connector-java.version>5.1.38</mysql-connector-java.version>
@@ -112,6 +112,10 @@
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
-
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>16.0.1</version>
+        </dependency>
     </dependencies>
 </project>

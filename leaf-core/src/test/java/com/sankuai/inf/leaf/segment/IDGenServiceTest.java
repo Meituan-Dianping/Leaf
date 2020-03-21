@@ -20,22 +20,22 @@ public class IDGenServiceTest {
     @Before
     public void before() throws IOException, SQLException {
         // Load Db Config
-        Properties properties = PropertyFactory.getProperties();
-
-        // Config dataSource
-        dataSource = new DruidDataSource();
-        dataSource.setUrl(properties.getProperty("jdbc.url"));
-        dataSource.setUsername(properties.getProperty("jdbc.username"));
-        dataSource.setPassword(properties.getProperty("jdbc.password"));
-        dataSource.init();
-
-        // Config Dao
-        IDAllocDao dao = new IDAllocDaoImpl(dataSource);
-
-        // Config ID Gen
-        idGen = new SegmentIDGenImpl();
-        ((SegmentIDGenImpl) idGen).setDao(dao);
-        idGen.init();
+//        Properties properties = PropertyFactory.getProperties();
+//
+//        // Config dataSource
+//        dataSource = new DruidDataSource();
+//        dataSource.setUrl(properties.getProperty("jdbc.url"));
+//        dataSource.setUsername(properties.getProperty("jdbc.username"));
+//        dataSource.setPassword(properties.getProperty("jdbc.password"));
+//        dataSource.init();
+//
+//        // Config Dao
+//        IDAllocDao dao = new IDAllocDaoImpl(dataSource);
+//
+//        // Config ID Gen
+//        idGen = new SegmentIDGenImpl();
+//        ((SegmentIDGenImpl) idGen).setDao(dao);
+//        idGen.init();
     }
     @Test
     public void testGetId() {

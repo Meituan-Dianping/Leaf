@@ -5,7 +5,7 @@
     <parent>
         <artifactId>leaf-plugin</artifactId>
         <groupId>com.sankuai.inf.leaf</groupId>
-        <version>1.0.1</version>
+        <version>1.0.1-RELEASE</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -14,7 +14,7 @@
         <dependency>
             <groupId>com.sankuai.inf.leaf</groupId>
             <artifactId>leaf-core</artifactId>
-            <version>1.0.1</version>
+            <version>1.0.1-RELEASE</version>
         </dependency>
     </dependencies>
 </project>

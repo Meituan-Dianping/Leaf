@@ -5,11 +5,11 @@
     <parent>
         <groupId>com.sankuai.inf.leaf</groupId>
         <artifactId>leaf-parent</artifactId>
-        <version>1.0.1</version>
+        <version>1.0.1-RELEASE</version>
     </parent>
     <groupId>com.sankuai.inf.leaf</groupId>
     <artifactId>leaf-server</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.1-RELEASE</version>
     <packaging>jar</packaging>
     <name>leaf-server</name>
     <description>Leaf HTTP Server</description>
