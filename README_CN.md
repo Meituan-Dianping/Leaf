@@ -24,11 +24,11 @@ mvn clean install -Dmaven.test.skip=true
 ```
 #### 引入依赖
 ```xml
-        <dependency>
-			<artifactId>leaf-boot-starter</artifactId>
-			<groupId>com.sankuai.inf.leaf</groupId>
-			<version>1.0.1-RELEASE</version>
-		</dependency>
+<dependency>
+	<artifactId>leaf-boot-starter</artifactId>
+    <groupId>com.sankuai.inf.leaf</groupId>
+    <version>1.0.1-RELEASE</version>
+</dependency>
 ```
 #### 配置leaf.properties到你的classpath下面
 ```properties
