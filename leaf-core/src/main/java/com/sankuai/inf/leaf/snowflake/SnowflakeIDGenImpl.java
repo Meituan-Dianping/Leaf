@@ -30,11 +30,14 @@ public class SnowflakeIDGenImpl implements IDGen {
     private long sequence = 0L;
     private long lastTimestamp = -1L;
     private static final Random RANDOM = new Random();
+    private SnowflakeHolder holder;
 
     public SnowflakeIDGenImpl(String zkAddress, int port) {
         //默认twepoch是Thu Nov 04 2010 09:42:54 GMT+0800 (中国标准时间)
         this(zkAddress, port, 1288834974657L);
     }
+
+
 
     /**
      * @param zkAddress zk地址
@@ -70,6 +73,7 @@ public class SnowflakeIDGenImpl implements IDGen {
      * @param twepoch   起始的时间戳
      */
     public SnowflakeIDGenImpl(SnowflakeHolder holder, long twepoch) {
+        this.holder = holder;
         this.twepoch = twepoch;
         Preconditions.checkArgument(timeGen() > twepoch, "Snowflake not support twepoch gt currentTime");
         final String ip = Utils.getIp();
@@ -84,10 +88,13 @@ public class SnowflakeIDGenImpl implements IDGen {
         Preconditions.checkArgument(workerId >= 0 && workerId <= maxWorkerId, "workerID must gte 0 and lte 1023");
     }
 
-
-
     @Override
     public synchronized Result get(String key) {
+        //如果是RecyclableZookeeperHolder模式，并且与zookeeper失去连接超过最大时间，那么会停止id生成服务，以防id重复
+        if (holder!=null && holder.getShouldGenerateContinue() == false) {
+            LOGGER.error("lost connect to zookeeper over maxDisConnectTime, cannot gennerate id");
+            return new Result(-4, Status.EXCEPTION);
+        }
         long timestamp = timeGen();
         if (timestamp < lastTimestamp) {
             long offset = lastTimestamp - timestamp;

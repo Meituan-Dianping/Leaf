@@ -53,13 +53,20 @@ public class SnowflakeIDGenImplTest {
         dataSource.init();
 
         // Config Dao
-        WorkerIdAllocDao dao = new WorkerIdAllocDaoImpl(dataSource);
-        SnowflakeMySQLHolder holder = new SnowflakeMySQLHolder(Utils.getIp(),8082, dao);
+        WorkerIdAllocDao     dao    = new WorkerIdAllocDaoImpl(dataSource);
+        SnowflakeMySQLHolder holder = new SnowflakeMySQLHolder(Utils.getIp(), 8082, dao);
+        IDGen                idGen  = new SnowflakeIDGenImpl(holder);
+    }
+
+
+    public void testGetIdInRecyclableMode() {
+        Properties properties = PropertyFactory.getProperties();
+        RecyclableZookeeperHolder holder = new RecyclableZookeeperHolder(Utils.getIp(),8080,properties.getProperty("leaf.zk.list"));
+
         IDGen idGen = new SnowflakeIDGenImpl(holder);
         for (int i = 1; i < 1000; ++i) {
             Result r = idGen.get("a");
             System.out.println(r);
         }
     }
-
 }

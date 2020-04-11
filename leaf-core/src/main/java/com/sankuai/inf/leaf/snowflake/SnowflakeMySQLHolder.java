@@ -30,7 +30,7 @@ public class SnowflakeMySQLHolder implements SnowflakeHolder {
 
     public SnowflakeMySQLHolder(String ip, Integer port, WorkerIdAllocDao dao) {
         this.ip = ip;
-        this.port = port.toString();
+        this.port = String.valueOf(port);
         this.dao = dao;
         this.listenAddress = ip + ":" + port;
     }
@@ -147,5 +147,9 @@ public class SnowflakeMySQLHolder implements SnowflakeHolder {
 
     public void setDao(WorkerIdAllocDao dao) {
         this.dao = dao;
+    }
+
+    public boolean getShouldGenerateContinue() {
+        return true;
     }
 }

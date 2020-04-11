@@ -235,4 +235,8 @@ public class SnowflakeLocalHolder implements SnowflakeHolder {
         this.workerID = workerID;
     }
 
+    public boolean getShouldGenerateContinue() {
+        return true;
+    }
+
 }

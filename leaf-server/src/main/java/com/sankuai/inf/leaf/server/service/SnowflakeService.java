@@ -10,7 +10,9 @@ import com.sankuai.inf.leaf.common.ZeroIDGen;
 import com.sankuai.inf.leaf.segment.dao.WorkerIdAllocDao;
 import com.sankuai.inf.leaf.segment.dao.impl.WorkerIdAllocDaoImpl;
 import com.sankuai.inf.leaf.server.Constants;
+import com.sankuai.inf.leaf.server.SnowflakeMode;
 import com.sankuai.inf.leaf.server.exception.InitException;
+import com.sankuai.inf.leaf.snowflake.RecyclableZookeeperHolder;
 import com.sankuai.inf.leaf.snowflake.SnowflakeIDGenImpl;
 import com.sankuai.inf.leaf.snowflake.SnowflakeLocalHolder;
 import com.sankuai.inf.leaf.snowflake.SnowflakeMySQLHolder;
@@ -32,12 +34,12 @@ public class SnowflakeService {
     public SnowflakeService() throws SQLException, InitException, IOException {
         Properties properties = PropertyFactory.getProperties();
         boolean flag = Boolean.parseBoolean(properties.getProperty(Constants.LEAF_SNOWFLAKE_ENABLE, "true"));
-        String mode = properties.getProperty(Constants.LEAF_SNOWFLAKE_MODE, "zk");
+        String mode = properties.getProperty(Constants.LEAF_SNOWFLAKE_MODE, SnowflakeMode.ZK_NORMAL);
         //当前leaf服务的端口
         int    port      = Integer.parseInt(properties.getProperty(Constants.LEAF_SNOWFLAKE_PORT));
 
         if (flag) {
-            if (mode.equals("zk")) {//注册中心为zk
+            if (mode.equals(SnowflakeMode.ZK_NORMAL)) {//注册中心为zk,对ip:port分配固定的workId的模式,这也是默认的模式
                 String zkAddress = properties.getProperty(Constants.LEAF_SNOWFLAKE_ZK_ADDRESS);
                 idGen = new SnowflakeIDGenImpl(zkAddress, port);
                 if (idGen.init()) {
@@ -45,7 +47,16 @@ public class SnowflakeService {
                 } else {
                     throw new InitException("Snowflake Service Init Fail");
                 }
-            } else if (mode.equals("mysql")) {
+            } else if(mode.equals(SnowflakeMode.ZK_RECYCLE)) {//注册中心为zk,对ip:port分配的workId是课循环利用的模式
+                String    zkAddress = properties.getProperty(Constants.LEAF_SNOWFLAKE_ZK_ADDRESS);
+                RecyclableZookeeperHolder holder    = new RecyclableZookeeperHolder(Utils.getIp(),port,zkAddress);
+                idGen = new SnowflakeIDGenImpl(holder);
+                if (idGen.init()) {
+                    logger.info("Snowflake Service Init Successfully in mode " + mode);
+                } else {
+                    throw new InitException("Snowflake Service Init Fail");
+                }
+            } else if (mode.equals(SnowflakeMode.MYSQL)) {//注册中心为mysql
                 DruidDataSource dataSource = new DruidDataSource();
                 dataSource.setUrl(properties.getProperty(Constants.LEAF_JDBC_URL));
                 dataSource.setUsername(properties.getProperty(Constants.LEAF_JDBC_USERNAME));
@@ -61,7 +72,7 @@ public class SnowflakeService {
                 } else {
                     throw new InitException("Snowflake Service Init Fail");
                 }
-            } else if (mode.equals("local")) {
+            } else if (mode.equals(SnowflakeMode.LOCAL)) {//注册中心为本地配置
                 ObjectMapper mapper = new ObjectMapper();
                 String  workIdMapString = PropertyFactory.getProperties().getProperty(Constants.LEAF_SNOWFLAKE_LOCAL_WORKIDMAP);
                 HashMap<String,Integer> workIdMap = mapper.readValue(workIdMapString, HashMap.class);

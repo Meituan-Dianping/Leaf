@@ -40,7 +40,7 @@ Leaf Server的配置都在leaf-server/src/main/resources/leaf.properties中
 | leaf.snowflake.enable     | 是否开启snowflake模式         | false  |
 | leaf.snowflake.zk.address | snowflake模式下的zk地址       |        |
 | leaf.snowflake.port       | snowflake模式下的服务注册端口 |        |
-| leaf.snowflake.mode       | snowflake模式下的注册中心模式，取值为zk,mysql或local |    zk   |
+| leaf.snowflake.mode       | snowflake模式下的注册中心模式，取值为zk_normal,zk_recycle,mysql或local |    zk   |
 | leaf.snowflake.local.workIdMap       | snowflake模式下的注册中心为local模式时，在项目中为指定ip:port分配workId |       |
 
 #### 号段模式

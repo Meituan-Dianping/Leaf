@@ -27,6 +27,7 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
 public class SnowflakeZookeeperHolder implements SnowflakeHolder {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(SnowflakeZookeeperHolder.class);
     private String zk_AddressNode = null;//保存自身的key  ip:port-000000001
     private String listenAddress = null;//保存自身的key ip:port
@@ -288,6 +289,10 @@ public class SnowflakeZookeeperHolder implements SnowflakeHolder {
 
     public void setWorkerID(int workerID) {
         this.workerID = workerID;
+    }
+
+    public boolean getShouldGenerateContinue() {
+        return true;
     }
 
 }

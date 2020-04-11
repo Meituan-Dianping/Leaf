@@ -10,4 +10,7 @@ public interface SnowflakeHolder {
 
     int getWorkerID();
 
+    //当使用的WorkIdMode是RRECYCLABLE时，并且与zookeeper失去连接时间过长时，应该停止生成id并抛出异常
+    public boolean getShouldGenerateContinue();
+
 }
