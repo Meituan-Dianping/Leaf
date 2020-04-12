@@ -2,10 +2,8 @@ package com.sankuai.inf.leaf.server.controller;
 
 import com.sankuai.inf.leaf.common.Result;
 import com.sankuai.inf.leaf.common.Status;
-import com.sankuai.inf.leaf.server.exception.LeafServerException;
-import com.sankuai.inf.leaf.server.exception.NoKeyException;
-import com.sankuai.inf.leaf.server.service.SegmentService;
-import com.sankuai.inf.leaf.server.service.SnowflakeService;
+import com.sankuai.inf.leaf.service.SegmentService;
+import com.sankuai.inf.leaf.service.SnowflakeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

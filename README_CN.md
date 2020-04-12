@@ -16,6 +16,56 @@ Leaf 最早期需求是各个业务线的订单ID生成需求。在美团早期�
 
 ## Quick Start
 
+### 使用leaf-starter注解来启动leaf
+
+```shell script
+git clone git@github.com:Meituan-Dianping/Leaf.git
+git checkout feature/spring-boot-starter
+cd leaf
+mvn clean install -Dmaven.test.skip=true 
+```
+#### 引入依赖
+```xml
+<dependency>
+	<artifactId>leaf-boot-starter</artifactId>
+    <groupId>com.sankuai.inf.leaf</groupId>
+    <version>1.0.1-RELEASE</version>
+</dependency>
+```
+#### 配置leaf.properties到你的classpath下面
+```properties
+leaf.name=com.sankuai.leaf.opensource.test
+leaf.segment.enable=false
+#leaf.segment.url=
+#leaf.segment.username=
+#leaf.segment.password=
+
+leaf.snowflake.enable=false
+#leaf.snowflake.address=
+#leaf.snowflake.port=
+```
+#### 利用注解启动leaf，并使用api
+```java
+//EnableLeafServer 开启leafserver
+@SpringBootApplication
+@EnableLeafServer
+public class LeafdemoApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(LeafdemoApplication.class, args);
+	}
+}
+//直接使用 spring注入
+public class T {
+    @Autowired
+    private SegmentService segmentService;
+    @Autowired
+    private SnowflakeService snowflakeService;
+}
+```
+
+TIPS:后续会将jar包上传的maven仓库
+
 ### 使用注解启动leaf
 https://github.com/Meituan-Dianping/Leaf/blob/feature/spring-boot-starter/README_CN.md
 

@@ -32,4 +32,5 @@ public interface IDAllocMapper {
 
     @Select("SELECT biz_tag FROM leaf_alloc")
     List<String> getAllTags();
+
 }

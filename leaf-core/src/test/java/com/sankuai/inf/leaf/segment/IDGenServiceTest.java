@@ -9,6 +9,8 @@ import com.sankuai.inf.leaf.segment.dao.impl.IDAllocDaoImpl;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.support.PropertiesLoaderUtils;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -20,8 +22,9 @@ public class IDGenServiceTest {
     @Before
     public void before() throws IOException, SQLException {
         // Load Db Config
-        Properties properties = PropertyFactory.getProperties();
+        Properties properties = PropertiesLoaderUtils.loadProperties(new ClassPathResource("leaf.properties"));
 
+        assert properties.getProperty("leaf.name").equals("default");
         // Config dataSource
         dataSource = new DruidDataSource();
         dataSource.setUrl(properties.getProperty("jdbc.url"));

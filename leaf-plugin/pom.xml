@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>leaf-parent</artifactId>
+        <groupId>com.sankuai.inf.leaf</groupId>
+        <version>1.0.1-RELEASE</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>leaf-plugin</artifactId>
+    <packaging>pom</packaging>
+    <modules>
+        <module>leaf-boot-starter</module>
+    </modules>
+
+    <dependencies>
+        <!--实现自动化配置-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-autoconfigure</artifactId>
+            <version>2.0.3.RELEASE</version>
+        </dependency>
+    </dependencies>
+
+</project>
