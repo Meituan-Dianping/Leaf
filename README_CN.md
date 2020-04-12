@@ -36,9 +36,9 @@ mvn clean install -Dmaven.test.skip=true
 ```properties
 leaf.name=com.sankuai.leaf.opensource.test
 leaf.segment.enable=false
-#leaf.jdbc.url=
-#leaf.jdbc.username=
-#leaf.jdbc.password=
+#leaf.segment.url=
+#leaf.segment.username=
+#leaf.segment.password=
 
 leaf.snowflake.enable=false
 #leaf.snowflake.address=
