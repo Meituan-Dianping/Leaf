@@ -261,14 +261,16 @@ public class SegmentIDGenImpl implements IDGen {
         int roll = 0;
         while (buffer.getThreadRunning().get()) {
             roll += 1;
+
+            try {
+                TimeUnit.MILLISECONDS.sleep(10);
+            } catch (InterruptedException e) {
+                logger.warn("Thread {} Interrupted",Thread.currentThread().getName());
+                break;
+            }
+
             if(roll > 10000) {
-                try {
-                    TimeUnit.MILLISECONDS.sleep(10);
-                    break;
-                } catch (InterruptedException e) {
-                    logger.warn("Thread {} Interrupted",Thread.currentThread().getName());
-                    break;
-                }
+                break;
             }
         }
     }
