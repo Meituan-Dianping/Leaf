@@ -52,7 +52,7 @@ public class SegmentBuffer {
     }
 
     public int nextPos() {
-        return (currentPos + 1) % 2;
+        return (currentPos + 1) & 1;
     }
 
     public void switchPos() {
