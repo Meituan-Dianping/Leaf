@@ -1,18 +1,18 @@
-本项目主要是针对Leaf原项目中的一些issue进行进一步的开发，增加了对非Zookeeper注册中心的支持和性能优化，主要改进如下：
+针对Leaf原项目中的一些issue，对Leaf项目进行功能加强和修复，增加了对非Zookeeper注册中心的支持和性能优化，主要改进如下：
 
-Snowflake算法相关的改进：
+### Snowflake算法相关的改进：
 
-##### 1.针对Leaf原项目中的[issue#84](https://github.com/Meituan-Dianping/Leaf/issues/84)，增加zk_recycle模式（注册中心为zk，workId循环使用）
+#### 1.针对Leaf原项目中的[issue#84](https://github.com/Meituan-Dianping/Leaf/issues/84)，增加zk_recycle模式（注册中心为zk，workId循环使用）
 
-##### 2.针对Leaf原项目中的[issue#100](https://github.com/Meituan-Dianping/Leaf/issues/100)，增加MySQL模式(注册中心为MySQL)
+#### 2.针对Leaf原项目中的[issue#100](https://github.com/Meituan-Dianping/Leaf/issues/100)，增加MySQL模式(注册中心为MySQL)
 
-##### 3.针对Leaf原项目中的[issue#100](https://github.com/Meituan-Dianping/Leaf/issues/100)，增加Local模式(注册中心为本地项目配置)
+#### 3.针对Leaf原项目中的[issue#100](https://github.com/Meituan-Dianping/Leaf/issues/100)，增加Local模式(注册中心为本地项目配置)
 
-Segement相关的改进：
+### Segement生成ID相关的改进：
 
-##### 1.针对Leaf原项目中的[issue#68](https://github.com/Meituan-Dianping/Leaf/issues/68)，优化SegmentIDGenImpl.updateCacheFromDb()方法。
+#### 1.针对Leaf原项目中的[issue#68](https://github.com/Meituan-Dianping/Leaf/issues/68)，优化SegmentIDGenImpl.updateCacheFromDb()方法。
 
-##### 2.针对Leaf原项目中的 [issue#88](https://github.com/Meituan-Dianping/Leaf/issues/88)，使用位运算&替换取模运算
+#### 2.针对Leaf原项目中的 [issue#88](https://github.com/Meituan-Dianping/Leaf/issues/88)，使用位运算&替换取模运算
 
 ## snowflake算法生成ID的相关改进
 
