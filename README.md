@@ -13,6 +13,8 @@ Leaf项目改进计划——主要是针对美团的分布式ID生成框架Leaf�
 
 #### 4.针对Leaf原项目中的[issue#84](https://github.com/Meituan-Dianping/Leaf/issues/84)，修复启动时时钟回拨的问题
 
+#### 5.针对Leaf原项目中的[issue#106](https://github.com/Meituan-Dianping/Leaf/issues/106)，修复时间差过大，超过41位溢出，导致生成的id负数的问题
+
 ### Segement生成ID相关的改进：
 
 #### 1.针对Leaf原项目中的[issue#68](https://github.com/Meituan-Dianping/Leaf/issues/68)，优化SegmentIDGenImpl.updateCacheFromDb()方法。
@@ -187,6 +189,23 @@ void updateNewData(CuratorFramework curator, String path) {
       } catch (Exception e) {
         	LOGGER.info("update init data error path is {} error is {}", path, e);
       }
+}
+```
+### 5.针对Leaf原项目中的[issue#106](https://github.com/Meituan-Dianping/Leaf/issues/106)，修复时间差过大，超过41位溢出，导致生成的id负数的问题
+#### 问题详情：
+因为Leaf框架是沿用snowflake的位数分配
+最大41位时间差+10位的workID+12位序列化，但是由于snowflake是强制要求第一位为符号位0，否则生成的id转换为十进制后会是复试，但是Leaf项目中没有对时间差进行校验，当时间戳过大或者自定义的twepoch设置不当过小，会导致计算得到的时间差过大，转化为2进制后超过41位，且第一位为1，会导致生成的long类型的id为负数，例如当timestamp = twepoch+2199023255552L时，
+此时在生成id时，timestamp - twepoch会等于2199023255552，2199023255552转换为二进制后是1+41个0，此时生成的id由于符号位是1，id会是负数-9223372036854775793
+```java
+ long id = ((timestamp - twepoch) << timestampLeftShift) | (workerId << workerIdShift) | sequence;
+```
+#### 解决方案：
+```java
+//一开始将最大的maxTimeStamp计算好
+this.maxTimeStamp = ~(-1L << timeStampBits) + twepoch;
+//然后生成ID时进行校验
+if (timestamp>maxTimeStamp) {
+    throw new OverMaxTimeStampException("current timestamp is over maxTimeStamp, the generate id will be negative");
 }
 ```
 
