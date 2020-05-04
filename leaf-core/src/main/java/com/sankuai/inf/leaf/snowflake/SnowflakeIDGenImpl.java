@@ -5,6 +5,7 @@ import com.sankuai.inf.leaf.IDGen;
 import com.sankuai.inf.leaf.common.Result;
 import com.sankuai.inf.leaf.common.Status;
 import com.sankuai.inf.leaf.common.Utils;
+import com.sankuai.inf.leaf.snowflake.exception.OverMaxTimeStampException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,11 +22,13 @@ public class SnowflakeIDGenImpl implements IDGen {
 
     private final long twepoch;
     private final long workerIdBits = 10L;
+    private final long timeStampBits = 41L;
     private final long maxWorkerId = ~(-1L << workerIdBits);//最大能够分配的workerid =1023
     private final long sequenceBits = 12L;
     private final long workerIdShift = sequenceBits;
     private final long timestampLeftShift = sequenceBits + workerIdBits;
     private final long sequenceMask = ~(-1L << sequenceBits);
+    private final long maxTimeStamp;
     private long workerId;
     private long sequence = 0L;
     private long lastTimestamp = -1L;
@@ -46,6 +49,7 @@ public class SnowflakeIDGenImpl implements IDGen {
      */
     public SnowflakeIDGenImpl(String zkAddress, int port, long twepoch) {
         this.twepoch = twepoch;
+        this.maxTimeStamp = ~(-1L << timeStampBits) + twepoch;
         Preconditions.checkArgument(timeGen() > twepoch, "Snowflake not support twepoch gt currentTime");
         final String ip = Utils.getIp();
         SnowflakeZookeeperHolder holder = new SnowflakeZookeeperHolder(ip, String.valueOf(port), zkAddress);
@@ -75,6 +79,7 @@ public class SnowflakeIDGenImpl implements IDGen {
     public SnowflakeIDGenImpl(SnowflakeHolder holder, long twepoch) {
         this.holder = holder;
         this.twepoch = twepoch;
+        this.maxTimeStamp = ~(-1L << timeStampBits) + twepoch;
         Preconditions.checkArgument(timeGen() > twepoch, "Snowflake not support twepoch gt currentTime");
         final String ip = Utils.getIp();
         LOGGER.info("twepoch:{} ,ip:{} ,holder:{} ", twepoch, ip, holder);
@@ -96,6 +101,10 @@ public class SnowflakeIDGenImpl implements IDGen {
             return new Result(-4, Status.EXCEPTION);
         }
         long timestamp = timeGen();
+        timestamp = twepoch+2199023255552L;
+        if (timestamp > maxTimeStamp) {
+            throw new OverMaxTimeStampException("current timestamp is over maxTimeStamp, the generate id will be negative");
+        }
         if (timestamp < lastTimestamp) {
             long offset = lastTimestamp - timestamp;
             if (offset <= 5) {
