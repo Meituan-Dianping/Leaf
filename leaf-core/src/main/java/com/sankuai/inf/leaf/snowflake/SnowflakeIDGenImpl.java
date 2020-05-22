@@ -101,7 +101,6 @@ public class SnowflakeIDGenImpl implements IDGen {
             return new Result(-4, Status.EXCEPTION);
         }
         long timestamp = timeGen();
-        timestamp = twepoch+2199023255552L;
         if (timestamp > maxTimeStamp) {
             throw new OverMaxTimeStampException("current timestamp is over maxTimeStamp, the generate id will be negative");
         }
