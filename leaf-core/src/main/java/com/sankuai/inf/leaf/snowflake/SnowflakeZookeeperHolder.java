@@ -26,7 +26,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
-public class SnowflakeZookeeperHolder {
+public class SnowflakeZookeeperHolder implements SnowflakeHolder {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(SnowflakeZookeeperHolder.class);
     private String zk_AddressNode = null;//保存自身的key  ip:port-000000001
     private String listenAddress = null;//保存自身的key ip:port
@@ -97,6 +98,10 @@ public class SnowflakeZookeeperHolder {
             try {
                 Properties properties = new Properties();
                 properties.load(new FileInputStream(new File(PROP_PATH.replace("{port}", port + ""))));
+                Long maxTimestamp = Long.valueOf(properties.getProperty("maxTimestamp"));
+                if (maxTimestamp!=null && System.currentTimeMillis() <maxTimestamp) {
+                    throw new CheckLastTimeException("init timestamp check error,forever node timestamp gt this node time");
+                }
                 workerID = Integer.valueOf(properties.getProperty("workerID"));
                 LOGGER.warn("START FAILED ,use local node file properties workerID-{}", workerID);
             } catch (Exception e1) {
@@ -157,6 +162,7 @@ public class SnowflakeZookeeperHolder {
                 return;
             }
             curator.setData().forPath(path, buildData().getBytes());
+            updateLocalWorkerID(workerID);
             lastUpdateTime = System.currentTimeMillis();
         } catch (Exception e) {
             LOGGER.info("update init data error path is {} error is {}", path, e);
@@ -190,9 +196,11 @@ public class SnowflakeZookeeperHolder {
         File leafConfFile = new File(PROP_PATH.replace("{port}", port));
         boolean exists = leafConfFile.exists();
         LOGGER.info("file exists status is {}", exists);
+        String maxTimestamp = String.valueOf(System.currentTimeMillis());
+        String data = "workerID=" + workerID + "\n" + "maxTimestamp=" + maxTimestamp;
         if (exists) {
             try {
-                FileUtils.writeStringToFile(leafConfFile, "workerID=" + workerID, false);
+                FileUtils.writeStringToFile(leafConfFile, data, false);
                 LOGGER.info("update file cache workerID is {}", workerID);
             } catch (IOException e) {
                 LOGGER.error("update file cache error ", e);
@@ -204,7 +212,7 @@ public class SnowflakeZookeeperHolder {
                 LOGGER.info("init local file cache create parent dis status is {}, worker id is {}", mkdirs, workerID);
                 if (mkdirs) {
                     if (leafConfFile.createNewFile()) {
-                        FileUtils.writeStringToFile(leafConfFile, "workerID=" + workerID, false);
+                        FileUtils.writeStringToFile(leafConfFile, data, false);
                         LOGGER.info("local file cache workerID is {}", workerID);
                     }
                 } else {
@@ -288,6 +296,10 @@ public class SnowflakeZookeeperHolder {
 
     public void setWorkerID(int workerID) {
         this.workerID = workerID;
+    }
+
+    public boolean getShouldGenerateContinue() {
+        return true;
     }
 
 }
