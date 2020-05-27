@@ -54,7 +54,7 @@ public class SnowflakeZookeeperHolder {
             if (stat == null) {
                 //不存在根节点,机器第一次启动,创建/snowflake/ip:port-000000000,并上传数据
                 zk_AddressNode = createNode(curator);
-                //worker id 默认是0
+                workerID = Integer.parseInt(zk_AddressNode.split("-")[1]);
                 updateLocalWorkerID(workerID);
                 //定时上报本机时间给forever节点
                 ScheduledUploadData(curator, zk_AddressNode);
