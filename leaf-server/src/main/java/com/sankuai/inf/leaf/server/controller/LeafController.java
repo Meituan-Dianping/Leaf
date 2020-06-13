@@ -27,6 +27,11 @@ public class LeafController {
         return get(key, segmentService.getId(key));
     }
 
+    @RequestMapping(value = "/api/segment/get/{key}/{size}")
+    public String getSegmentIdBatch(@PathVariable("key") String key,@PathVariable("size") Long size) {
+        return get(key, segmentService.getIdBatch(key, size));
+    }
+
     @RequestMapping(value = "/api/snowflake/get/{key}")
     public String getSnowflakeId(@PathVariable("key") String key) {
         return get(key, snowflakeService.getId(key));
@@ -40,6 +45,9 @@ public class LeafController {
         result = id;
         if (result.getStatus().equals(Status.EXCEPTION)) {
             throw new LeafServerException(result.toString());
+        }
+        if (result.getSize() > 1) {
+            return (result.getId() + ":" + result.getSize());
         }
         return String.valueOf(result.getId());
     }

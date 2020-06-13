@@ -1,15 +1,22 @@
 package com.sankuai.inf.leaf.common;
 
 public class Result {
+
     private long id;
+    private long size = 1;
     private Status status;
 
     public Result() {
-
     }
+
     public Result(long id, Status status) {
         this.id = id;
         this.status = status;
+    }
+
+    public Result(long id, long size, Status status) {
+        this(id, status);
+        this.size = size;
     }
 
     public long getId() {
@@ -18,6 +25,14 @@ public class Result {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public long getSize() {
+        return size;
+    }
+
+    public void setSize(long size) {
+        this.size = size;
     }
 
     public Status getStatus() {
