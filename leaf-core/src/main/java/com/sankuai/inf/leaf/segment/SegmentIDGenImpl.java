@@ -236,9 +236,9 @@ public class SegmentIDGenImpl implements IDGen {
                         }
                     });
                 }
-                long value = segment.getValue().getAndAdd(size);
+                long value = segment.getValue().addAndGet(size);
                 if (value < segment.getMax()) {
-                    return new Result(value, size, Status.SUCCESS);
+                    return new Result(value - size, size, Status.SUCCESS);
                 }
             } finally {
                 buffer.rLock().unlock();
@@ -247,9 +247,9 @@ public class SegmentIDGenImpl implements IDGen {
             buffer.wLock().lock();
             try {
                 final Segment segment = buffer.getCurrent();
-                long value = segment.getValue().getAndAdd(size);
+                long value = segment.getValue().addAndGet(size);
                 if (value < segment.getMax()) {
-                    return new Result(value, size, Status.SUCCESS);
+                    return new Result(value - size, size, Status.SUCCESS);
                 }
                 if (buffer.isNextReady()) {
                     buffer.switchPos();
