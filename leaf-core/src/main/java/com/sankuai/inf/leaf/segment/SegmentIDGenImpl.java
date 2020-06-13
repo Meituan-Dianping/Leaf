@@ -208,13 +208,14 @@ public class SegmentIDGenImpl implements IDGen {
 
     public Result getIdFromSegmentBuffer(final SegmentBuffer buffer, Long size) {
         while (true) {
+            Future<Boolean> future = null;
             buffer.rLock().lock();
             try {
                 final Segment segment = buffer.getCurrent();
                 if (!buffer.isNextReady() && (segment.getIdle() < 0.9 * segment.getStep()) && buffer.getThreadRunning().compareAndSet(false, true)) {
-                    service.execute(new Runnable() {
+                    future = service.submit(new Callable<Boolean>() {
                         @Override
-                        public void run() {
+                        public Boolean call() {
                             Segment next = buffer.getSegments()[buffer.nextPos()];
                             boolean updateOk = false;
                             try {
@@ -233,6 +234,7 @@ public class SegmentIDGenImpl implements IDGen {
                                     buffer.getThreadRunning().set(false);
                                 }
                             }
+                            return updateOk;
                         }
                     });
                 }
@@ -243,7 +245,7 @@ public class SegmentIDGenImpl implements IDGen {
             } finally {
                 buffer.rLock().unlock();
             }
-            waitAndSleep(buffer);
+            waitAndGet(buffer, future);
             buffer.wLock().lock();
             try {
                 final Segment segment = buffer.getCurrent();
@@ -264,17 +266,19 @@ public class SegmentIDGenImpl implements IDGen {
         }
     }
 
-    private void waitAndSleep(SegmentBuffer buffer) {
+    private void waitAndGet(SegmentBuffer buffer, Future<Boolean> future) {
         int roll = 0;
         while (buffer.getThreadRunning().get()) {
             roll += 1;
-            if(roll > 10000) {
-                try {
-                    TimeUnit.MILLISECONDS.sleep(10);
-                    break;
-                } catch (InterruptedException e) {
-                    logger.warn("Thread {} Interrupted",Thread.currentThread().getName());
-                    break;
+            if (roll > 10000) {
+                if (future != null) {
+                    try {
+                        future.get(10L, TimeUnit.MILLISECONDS);
+                        break;
+                    } catch (Exception e) {
+                        logger.warn("Thread {} Exception", Thread.currentThread().getName());
+                        break;
+                    }
                 }
             }
         }
