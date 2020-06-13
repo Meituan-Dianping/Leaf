@@ -17,6 +17,11 @@ public class SnowflakeIDGenImpl implements IDGen {
         return true;
     }
 
+    @Override
+    public Result getBatch(String key, Long size) {
+        return null;
+    }
+
     private static final Logger LOGGER = LoggerFactory.getLogger(SnowflakeIDGenImpl.class);
 
     private final long twepoch;
@@ -32,7 +37,7 @@ public class SnowflakeIDGenImpl implements IDGen {
     private static final Random RANDOM = new Random();
 
     public SnowflakeIDGenImpl(String zkAddress, int port) {
-        //Thu Nov 04 2010 09:42:54 GMT+0800 (中国标准时间) 
+        //Thu Nov 04 2010 09:42:54 GMT+0800 (中国标准时间)
         this(zkAddress, port, 1288834974657L);
     }
 

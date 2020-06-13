@@ -56,6 +56,10 @@ public class SegmentService {
         return idGen.get(key);
     }
 
+    public Result getIdBatch(String key, Long size) {
+        return idGen.getBatch(key, size);
+    }
+
     public SegmentIDGenImpl getIdGen() {
         if (idGen instanceof SegmentIDGenImpl) {
             return (SegmentIDGenImpl) idGen;

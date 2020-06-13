@@ -12,4 +12,9 @@ public class ZeroIDGen implements IDGen {
     public boolean init() {
         return true;
     }
+
+    @Override
+    public Result getBatch(String key, Long size) {
+        return null;
+    }
 }

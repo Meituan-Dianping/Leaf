@@ -4,7 +4,9 @@ import com.sankuai.inf.leaf.IDGen;
 import com.sankuai.inf.leaf.common.Result;
 import com.sankuai.inf.leaf.common.Status;
 import com.sankuai.inf.leaf.segment.dao.IDAllocDao;
-import com.sankuai.inf.leaf.segment.model.*;
+import com.sankuai.inf.leaf.segment.model.LeafAlloc;
+import com.sankuai.inf.leaf.segment.model.Segment;
+import com.sankuai.inf.leaf.segment.model.SegmentBuffer;
 import org.perf4j.StopWatch;
 import org.perf4j.slf4j.Slf4JStopWatch;
 import org.slf4j.Logger;
@@ -132,6 +134,11 @@ public class SegmentIDGenImpl implements IDGen {
 
     @Override
     public Result get(final String key) {
+        return getBatch(key, 1L);
+    }
+
+    @Override
+    public Result getBatch(String key, Long size) {
         if (!initOK) {
             return new Result(EXCEPTION_ID_IDCACHE_INIT_FALSE, Status.EXCEPTION);
         }
@@ -150,7 +157,7 @@ public class SegmentIDGenImpl implements IDGen {
                     }
                 }
             }
-            return getIdFromSegmentBuffer(cache.get(key));
+            return getIdFromSegmentBuffer(cache.get(key), size);
         }
         return new Result(EXCEPTION_ID_KEY_NOT_EXISTS, Status.EXCEPTION);
     }
@@ -199,7 +206,7 @@ public class SegmentIDGenImpl implements IDGen {
         sw.stop("updateSegmentFromDb", key + " " + segment);
     }
 
-    public Result getIdFromSegmentBuffer(final SegmentBuffer buffer) {
+    public Result getIdFromSegmentBuffer(final SegmentBuffer buffer, Long size) {
         while (true) {
             buffer.rLock().lock();
             try {
@@ -229,9 +236,9 @@ public class SegmentIDGenImpl implements IDGen {
                         }
                     });
                 }
-                long value = segment.getValue().getAndIncrement();
+                long value = segment.getValue().getAndAdd(size);
                 if (value < segment.getMax()) {
-                    return new Result(value, Status.SUCCESS);
+                    return new Result(value, size, Status.SUCCESS);
                 }
             } finally {
                 buffer.rLock().unlock();
@@ -240,9 +247,9 @@ public class SegmentIDGenImpl implements IDGen {
             buffer.wLock().lock();
             try {
                 final Segment segment = buffer.getCurrent();
-                long value = segment.getValue().getAndIncrement();
+                long value = segment.getValue().getAndAdd(size);
                 if (value < segment.getMax()) {
-                    return new Result(value, Status.SUCCESS);
+                    return new Result(value, size, Status.SUCCESS);
                 }
                 if (buffer.isNextReady()) {
                     buffer.switchPos();
