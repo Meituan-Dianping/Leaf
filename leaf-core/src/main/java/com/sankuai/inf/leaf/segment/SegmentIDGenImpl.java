@@ -41,6 +41,7 @@ public class SegmentIDGenImpl implements IDGen {
     private volatile boolean initOK = false;
     private Map<String, SegmentBuffer> cache = new ConcurrentHashMap<String, SegmentBuffer>();
     private IDAllocDao dao;
+    private static final Random RANDOM = new Random();
 
     public static class UpdateThreadFactory implements ThreadFactory {
 
@@ -192,7 +193,9 @@ public class SegmentIDGenImpl implements IDGen {
             buffer.setMinStep(leafAlloc.getStep());//leafAlloc的step为DB中的step
         }
         // must set value before set max
-        long value = leafAlloc.getMaxId() - buffer.getStep();
+        int bound = buffer.getStep()/20;//随机值最大取值为5%的Step，主要考虑到buffer中id使用量超过10%就会触发另一个buffer的更新
+        int randomValue = RANDOM.nextInt(bound);//生成随机值
+        long value = leafAlloc.getMaxId() - buffer.getStep() + randomValue;//丢弃随机值数量的id，让id不连续，保证id安全性
         segment.getValue().set(value);
         segment.setMax(leafAlloc.getMaxId());
         segment.setStep(buffer.getStep());
