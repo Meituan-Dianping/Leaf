@@ -47,7 +47,7 @@
         <jackson-databind.version>2.9.6</jackson-databind.version>
         <mysql-connector-java.version>5.1.38</mysql-connector-java.version>
         <commons-io.version>2.4</commons-io.version>
-        <log4j.version>2.7</log4j.version>
+        <log4j.version>2.13.3</log4j.version>
         <mybatis-spring.version>1.2.5</mybatis-spring.version>
     </properties>
     <dependencyManagement>
