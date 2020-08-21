@@ -2,6 +2,7 @@ package com.sankuai.inf.leaf.snowflake;
 
 import com.google.common.base.Preconditions;
 import com.sankuai.inf.leaf.IDGen;
+import com.sankuai.inf.leaf.common.PropertyFactory;
 import com.sankuai.inf.leaf.common.Result;
 import com.sankuai.inf.leaf.common.Status;
 import com.sankuai.inf.leaf.common.Utils;
@@ -30,10 +31,11 @@ public class SnowflakeIDGenImpl implements IDGen {
     private long sequence = 0L;
     private long lastTimestamp = -1L;
     private static final Random RANDOM = new Random();
+    private final String snowflakeName;
 
     public SnowflakeIDGenImpl(String zkAddress, int port) {
         //Thu Nov 04 2010 09:42:54 GMT+0800 (中国标准时间) 
-        this(zkAddress, port, 1288834974657L);
+        this(zkAddress, port, 1288834974657L, PropertyFactory.getProperties().getProperty("leaf.name"));
     }
 
     /**
@@ -41,11 +43,12 @@ public class SnowflakeIDGenImpl implements IDGen {
      * @param port      snowflake监听端口
      * @param twepoch   起始的时间戳
      */
-    public SnowflakeIDGenImpl(String zkAddress, int port, long twepoch) {
+    public SnowflakeIDGenImpl(String zkAddress, int port, long twepoch, String snowflakeName) {
         this.twepoch = twepoch;
+        this.snowflakeName = snowflakeName;
         Preconditions.checkArgument(timeGen() > twepoch, "Snowflake not support twepoch gt currentTime");
         final String ip = Utils.getIp();
-        SnowflakeZookeeperHolder holder = new SnowflakeZookeeperHolder(ip, String.valueOf(port), zkAddress);
+        SnowflakeZookeeperHolder holder = new SnowflakeZookeeperHolder(ip, String.valueOf(port), zkAddress, snowflakeName);
         LOGGER.info("twepoch:{} ,ip:{} ,zkAddress:{} port:{}", twepoch, ip, zkAddress, port);
         boolean initFlag = holder.init();
         if (initFlag) {
