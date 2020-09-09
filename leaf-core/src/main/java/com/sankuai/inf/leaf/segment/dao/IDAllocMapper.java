@@ -28,7 +28,7 @@ public interface IDAllocMapper {
     void updateMaxId(@Param("tag") String tag);
 
     @Update("UPDATE leaf_alloc SET max_id = max_id + #{step} WHERE biz_tag = #{key}")
-    void updateMaxIdByCustomStep(@Param("leafAlloc") LeafAlloc leafAlloc);
+    void updateMaxIdByCustomStep(LeafAlloc leafAlloc);
 
     @Select("SELECT biz_tag FROM leaf_alloc")
     List<String> getAllTags();
