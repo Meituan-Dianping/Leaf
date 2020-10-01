@@ -7,6 +7,7 @@ import com.sankuai.inf.leaf.common.Status;
 import com.sankuai.inf.leaf.common.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.sankuai.inf.leaf.common.*;
 
 import java.util.Random;
 
@@ -44,7 +45,10 @@ public class SnowflakeIDGenImpl implements IDGen {
     public SnowflakeIDGenImpl(String zkAddress, int port, long twepoch) {
         this.twepoch = twepoch;
         Preconditions.checkArgument(timeGen() > twepoch, "Snowflake not support twepoch gt currentTime");
-        final String ip = Utils.getIp();
+
+        String enableHostname = PropertyFactory.getProperties().getProperty("leaf.snowflake.hostname.eanble");
+        final String ip = "true".equals(enableHostname) ? Utils.getHostname().replaceAll("-", "") : Utils.getIp();
+
         SnowflakeZookeeperHolder holder = new SnowflakeZookeeperHolder(ip, String.valueOf(port), zkAddress);
         LOGGER.info("twepoch:{} ,ip:{} ,zkAddress:{} port:{}", twepoch, ip, zkAddress, port);
         boolean initFlag = holder.init();

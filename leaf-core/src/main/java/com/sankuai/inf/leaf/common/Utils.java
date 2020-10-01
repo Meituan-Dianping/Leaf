@@ -1,15 +1,16 @@
 package com.sankuai.inf.leaf.common;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Utils {
     private static final Logger logger = LoggerFactory.getLogger(Utils.class);
@@ -25,6 +26,21 @@ public class Utils {
             logger.warn("Utils get IP warn", ex);
         }
         return ip;
+    }
+
+    /**
+     * 获取计算机主机名
+     */
+    public static String getHostname() {
+    	String hostname;
+		try {
+			InetAddress ia = InetAddress.getLocalHost();
+			hostname = ia.getHostName();
+		} catch (UnknownHostException ex) {
+			hostname = "";
+            logger.warn("Utils get Hostname warn", ex);
+		}
+    	return hostname;
     }
 
     public static String getIp(String interfaceName) {
