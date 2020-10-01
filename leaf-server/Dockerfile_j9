@@ -1,0 +1,7 @@
+FROM adoptopenjdk/openjdk8-openj9:alpine-slim
+
+ADD target/leaf.jar /
+EXPOSE 8080
+
+# you can put your own leaf.properties file into the '/' path
+CMD ["java", "-Xbootclasspath/a:./", "-jar", "leaf.jar"]

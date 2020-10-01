@@ -21,6 +21,11 @@ public class LeafController {
     private SegmentService segmentService;
     @Autowired
     private SnowflakeService snowflakeService;
+    
+    @RequestMapping(value = "/")
+    public String index() {
+        return "This is Leaf";
+    }
 
     @RequestMapping(value = "/api/segment/get/{key}")
     public String getSegmentId(@PathVariable("key") String key) {
