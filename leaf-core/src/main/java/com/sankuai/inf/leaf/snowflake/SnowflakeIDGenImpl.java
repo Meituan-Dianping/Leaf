@@ -5,10 +5,12 @@ import com.sankuai.inf.leaf.IDGen;
 import com.sankuai.inf.leaf.common.Result;
 import com.sankuai.inf.leaf.common.Status;
 import com.sankuai.inf.leaf.common.Utils;
+import com.sankuai.inf.leaf.snowflake.exception.CheckLastTimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 public class SnowflakeIDGenImpl implements IDGen {
 
@@ -94,12 +96,28 @@ public class SnowflakeIDGenImpl implements IDGen {
 
     }
 
-    protected long tilNextMillis(long lastTimestamp) {
-        long timestamp = timeGen();
-        while (timestamp <= lastTimestamp) {
+    /**
+     * 等待下个毫秒，防止等待期间系统时钟被回调，导致方法一直轮询
+     */
+    protected long tilNextMillis(long lastTimestamp){
+        long timestamp;
+        long offset;
+        while (true) {
             timestamp = timeGen();
+            offset = lastTimestamp-timestamp;
+            if(offset<0){
+                return timestamp;
+            }
+            if(offset>=5) { // 系统时钟回调时间大于5ms
+                throw new CheckLastTimeException("timestamp check error,last timestamp " + lastTimestamp + ",now " + timestamp);
+            }
+            if(offset>=2){ // 系统时钟回调时间大于等于2ms
+                try {
+                    TimeUnit.MILLISECONDS.sleep(offset);
+                } catch (InterruptedException ignore) {
+                }
+            }
         }
-        return timestamp;
     }
 
     protected long timeGen() {
