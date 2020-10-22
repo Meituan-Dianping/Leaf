@@ -15,17 +15,21 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * @author mickle
+ */
 @Controller
 public class LeafMonitorController {
     private Logger logger = LoggerFactory.getLogger(LeafMonitorController.class);
 
-    @Autowired
+    @Resource
     private SegmentService segmentService;
 
     @RequestMapping(value = "cache")

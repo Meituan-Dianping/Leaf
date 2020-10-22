@@ -13,11 +13,14 @@ import org.springframework.stereotype.Service;
 
 import java.util.Properties;
 
+/**
+ * @author mickle
+ */
 @Service("SnowflakeService")
 public class SnowflakeService {
-    private Logger logger = LoggerFactory.getLogger(SnowflakeService.class);
+    private final Logger logger = LoggerFactory.getLogger(SnowflakeService.class);
 
-    private IDGen idGen;
+    private final IDGen idGen;
 
     public SnowflakeService() throws InitException {
         Properties properties = PropertyFactory.getProperties();

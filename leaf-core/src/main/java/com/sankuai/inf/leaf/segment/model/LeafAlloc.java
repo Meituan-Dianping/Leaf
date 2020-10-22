@@ -1,5 +1,8 @@
 package com.sankuai.inf.leaf.segment.model;
 
+/**
+ * @author mickle
+ */
 public class LeafAlloc {
     private String key;
     private long maxId;

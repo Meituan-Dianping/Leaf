@@ -1,5 +1,8 @@
 package com.sankuai.inf.leaf.common;
 
+/**
+ * @author mickle
+ */
 public class Result {
     private long id;
     private Status status;

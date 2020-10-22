@@ -14,6 +14,9 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicLong;
 
+/**
+ * @author mickle
+ */
 public class SegmentIDGenImpl implements IDGen {
     private static final Logger logger = LoggerFactory.getLogger(SegmentIDGenImpl.class);
 
@@ -37,9 +40,9 @@ public class SegmentIDGenImpl implements IDGen {
      * 一个Segment维持时间为15分钟
      */
     private static final long SEGMENT_DURATION = 15 * 60 * 1000L;
-    private ExecutorService service = new ThreadPoolExecutor(5, Integer.MAX_VALUE, 60L, TimeUnit.SECONDS, new SynchronousQueue<Runnable>(), new UpdateThreadFactory());
+    private final ExecutorService service = new ThreadPoolExecutor(5, Integer.MAX_VALUE, 60L, TimeUnit.SECONDS, new SynchronousQueue<Runnable>(), new UpdateThreadFactory());
     private volatile boolean initOK = false;
-    private Map<String, SegmentBuffer> cache = new ConcurrentHashMap<String, SegmentBuffer>();
+    private final Map<String, SegmentBuffer> cache = new ConcurrentHashMap<String, SegmentBuffer>();
     private IDAllocDao dao;
 
     public static class UpdateThreadFactory implements ThreadFactory {
@@ -96,11 +99,8 @@ public class SegmentIDGenImpl implements IDGen {
             Set<String> insertTagsSet = new HashSet<>(dbTags);
             Set<String> removeTagsSet = new HashSet<>(cacheTags);
             //db中新加的tags灌进cache
-            for(int i = 0; i < cacheTags.size(); i++){
-                String tmp = cacheTags.get(i);
-                if(insertTagsSet.contains(tmp)){
-                    insertTagsSet.remove(tmp);
-                }
+            for (String tmp : cacheTags) {
+              insertTagsSet.remove(tmp);
             }
             for (String tag : insertTagsSet) {
                 SegmentBuffer buffer = new SegmentBuffer();
@@ -113,11 +113,8 @@ public class SegmentIDGenImpl implements IDGen {
                 logger.info("Add tag {} from db to IdCache, SegmentBuffer {}", tag, buffer);
             }
             //cache中已失效的tags从cache删除
-            for(int i = 0; i < dbTags.size(); i++){
-                String tmp = dbTags.get(i);
-                if(removeTagsSet.contains(tmp)){
-                    removeTagsSet.remove(tmp);
-                }
+            for (String tmp : dbTags) {
+              removeTagsSet.remove(tmp);
             }
             for (String tag : removeTagsSet) {
                 cache.remove(tag);
@@ -162,12 +159,14 @@ public class SegmentIDGenImpl implements IDGen {
         if (!buffer.isInitOk()) {
             leafAlloc = dao.updateMaxIdAndGetLeafAlloc(key);
             buffer.setStep(leafAlloc.getStep());
-            buffer.setMinStep(leafAlloc.getStep());//leafAlloc中的step为DB中的step
+            // leafAlloc中的step为DB中的step
+            buffer.setMinStep(leafAlloc.getStep());
         } else if (buffer.getUpdateTimestamp() == 0) {
             leafAlloc = dao.updateMaxIdAndGetLeafAlloc(key);
             buffer.setUpdateTimestamp(System.currentTimeMillis());
             buffer.setStep(leafAlloc.getStep());
-            buffer.setMinStep(leafAlloc.getStep());//leafAlloc中的step为DB中的step
+            // leafAlloc中的step为DB中的step
+            buffer.setMinStep(leafAlloc.getStep());
         } else {
             long duration = System.currentTimeMillis() - buffer.getUpdateTimestamp();
             int nextStep = buffer.getStep();
@@ -189,7 +188,8 @@ public class SegmentIDGenImpl implements IDGen {
             leafAlloc = dao.updateMaxIdByCustomStepAndGetLeafAlloc(temp);
             buffer.setUpdateTimestamp(System.currentTimeMillis());
             buffer.setStep(nextStep);
-            buffer.setMinStep(leafAlloc.getStep());//leafAlloc的step为DB中的step
+            // leafAlloc的step为DB中的step
+            buffer.setMinStep(leafAlloc.getStep());
         }
         // must set value before set max
         long value = leafAlloc.getMaxId() - buffer.getStep();

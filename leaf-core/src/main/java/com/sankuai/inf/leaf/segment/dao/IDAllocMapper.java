@@ -5,6 +5,9 @@ import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
+/**
+ * @author mickle
+ */
 public interface IDAllocMapper {
 
     @Select("SELECT biz_tag, max_id, step, update_time FROM leaf_alloc")

@@ -2,11 +2,14 @@ package com.sankuai.inf.leaf.segment.model;
 
 import java.util.concurrent.atomic.AtomicLong;
 
+/**
+ * @author mickle
+ */
 public class Segment {
     private AtomicLong value = new AtomicLong(0);
     private volatile long max;
     private volatile int step;
-    private SegmentBuffer buffer;
+    private final SegmentBuffer buffer;
 
     public Segment(SegmentBuffer buffer) {
         this.buffer = buffer;

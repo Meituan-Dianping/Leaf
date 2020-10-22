@@ -1,12 +1,15 @@
 package com.sankuai.inf.leaf.common;
 
+/**
+ * @author mickle
+ */
 public class CheckVO {
     private long timestamp;
-    private int workID;
+    private int workId;
 
-    public CheckVO(long timestamp, int workID) {
+    public CheckVO(long timestamp, int workId) {
         this.timestamp = timestamp;
-        this.workID = workID;
+        this.workId = workId;
     }
 
     public long getTimestamp() {
@@ -17,11 +20,19 @@ public class CheckVO {
         this.timestamp = timestamp;
     }
 
-    public int getWorkID() {
-        return workID;
+    public int getWorkId() {
+        return workId;
     }
 
-    public void setWorkID(int workID) {
-        this.workID = workID;
+    public void setWorkId(int workId) {
+        this.workId = workId;
     }
+
+  @Override
+  public String toString() {
+    return "CheckVO{" +
+      "timestamp=" + timestamp +
+      ", workId=" + workId +
+      '}';
+  }
 }

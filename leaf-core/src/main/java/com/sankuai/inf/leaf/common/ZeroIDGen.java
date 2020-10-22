@@ -2,6 +2,9 @@ package com.sankuai.inf.leaf.common;
 
 import com.sankuai.inf.leaf.IDGen;
 
+/**
+ * @author mickle
+ */
 public class ZeroIDGen implements IDGen {
     @Override
     public Result get(String key) {

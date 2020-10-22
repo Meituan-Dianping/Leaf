@@ -17,19 +17,21 @@ import org.springframework.stereotype.Service;
 import java.sql.SQLException;
 import java.util.Properties;
 
+/**
+ * @author mickle
+ */
 @Service("SegmentService")
 public class SegmentService {
-    private Logger logger = LoggerFactory.getLogger(SegmentService.class);
+    private final Logger logger = LoggerFactory.getLogger(SegmentService.class);
 
-    private IDGen idGen;
-    private DruidDataSource dataSource;
+    private final IDGen idGen;
 
-    public SegmentService() throws SQLException, InitException {
+  public SegmentService() throws SQLException, InitException {
         Properties properties = PropertyFactory.getProperties();
         boolean flag = Boolean.parseBoolean(properties.getProperty(Constants.LEAF_SEGMENT_ENABLE, "true"));
         if (flag) {
             // Config dataSource
-            dataSource = new DruidDataSource();
+            DruidDataSource dataSource = new DruidDataSource();
             dataSource.setUrl(properties.getProperty(Constants.LEAF_JDBC_URL));
             dataSource.setUsername(properties.getProperty(Constants.LEAF_JDBC_USERNAME));
             dataSource.setPassword(properties.getProperty(Constants.LEAF_JDBC_PASSWORD));
