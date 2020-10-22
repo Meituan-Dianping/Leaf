@@ -32,7 +32,7 @@ public class SnowflakeIDGenImpl implements IDGen {
     private static final Random RANDOM = new Random();
 
     public SnowflakeIDGenImpl(String zkAddress, int port) {
-        //Thu Nov 04 2010 09:42:54 GMT+0800 (中国标准时间) 
+        //Thu Nov 04 2010 09:42:54 GMT+0800 (中国标准时间)
         this(zkAddress, port, 1288834974657L);
     }
 
@@ -49,7 +49,7 @@ public class SnowflakeIDGenImpl implements IDGen {
         LOGGER.info("twepoch:{} ,ip:{} ,zkAddress:{} port:{}", twepoch, ip, zkAddress, port);
         boolean initFlag = holder.init();
         if (initFlag) {
-            workerId = holder.getWorkerID();
+            workerId = holder.getWorkerId();
             LOGGER.info("START SUCCESS USE ZK WORKERID-{}", workerId);
         } else {
             Preconditions.checkArgument(initFlag, "Snowflake Id Gen is not init ok");
