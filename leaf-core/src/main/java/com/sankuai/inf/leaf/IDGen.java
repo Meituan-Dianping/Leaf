@@ -8,8 +8,8 @@ import com.sankuai.inf.leaf.common.Result;
  */
 public interface IDGen {
     /**
-     * 获取指定业务下一 id
-     * @param key         业务类别
+     * 获取指定业务tag下一id
+     * @param key         业务tag
      * @return            result
      */
     Result get(String key);

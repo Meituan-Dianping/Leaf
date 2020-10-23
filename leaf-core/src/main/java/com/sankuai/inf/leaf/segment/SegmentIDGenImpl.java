@@ -76,7 +76,7 @@ public class SegmentIDGenImpl implements IDGen {
     }
 
     /**
-     * 定时每分钟从数据库中获取数据存入 cache 中
+     * 定时每分钟从数据库中加载tag到cache中
      */
     private void updateCacheFromDbAtEveryMinute() {
         ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor(new ThreadFactory() {
@@ -97,7 +97,9 @@ public class SegmentIDGenImpl implements IDGen {
     }
 
     /**
-     * 从数据库中存入数据到 cache 中
+     * 加载数据库中的业务tag到cache
+     *
+     * 添加增量更新的tag和移除失效的tag
      */
     private void updateCacheFromDb() {
         logger.info("update cache from db");
@@ -110,13 +112,16 @@ public class SegmentIDGenImpl implements IDGen {
             if (dbTags == null || dbTags.isEmpty()) {
                 return;
             }
+            // cache 中已存在的业务 tag 列表
             List<String> cacheTags = new ArrayList<String>(cache.keySet());
             Set<String> insertTagsSet = new HashSet<>(dbTags);
             Set<String> removeTagsSet = new HashSet<>(cacheTags);
-            //db中新加的tags灌进cache
-            for (String tmp : cacheTags) {
-              insertTagsSet.remove(tmp);
-            }
+//            for (String tmp : cacheTags) {
+//              insertTagsSet.remove(tmp);
+//            }
+          // 感觉可以优化： 新增 set 中去除 cache 中已存在的 tag
+          insertTagsSet.removeAll(cacheTags);
+          // 往 cache 中存入未缓存的 SegmentBuffer
             for (String tag : insertTagsSet) {
                 SegmentBuffer buffer = new SegmentBuffer();
                 buffer.setKey(tag);
@@ -127,10 +132,12 @@ public class SegmentIDGenImpl implements IDGen {
                 cache.put(tag, buffer);
                 logger.info("Add tag {} from db to IdCache, SegmentBuffer {}", tag, buffer);
             }
-            //cache中已失效的tags从cache删除
-            for (String tmp : dbTags) {
-              removeTagsSet.remove(tmp);
-            }
+            // cache 中已失效的 tag 从 cache 删除
+//            for (String tmp : dbTags) {
+//              removeTagsSet.remove(tmp);
+//            }
+            removeTagsSet.removeAll(dbTags);
+
             for (String tag : removeTagsSet) {
                 cache.remove(tag);
                 logger.info("Remove tag {} from IdCache", tag);
@@ -142,12 +149,20 @@ public class SegmentIDGenImpl implements IDGen {
         }
     }
 
+    /**
+     * 获取指定业务tag下一id
+     * @param key         业务tag
+     * @return            result
+     */
     @Override
     public Result get(final String key) {
+        // 如果生成器初始化失败，则返回未成功初始化异常码
         if (!initSuccess) {
             return new Result(EXCEPTION_ID_IDCACHE_INIT_FALSE, Status.EXCEPTION);
         }
+        // cache中有业务tag
         if (cache.containsKey(key)) {
+            // 获取业务对应的SegmentBuffer
             SegmentBuffer buffer = cache.get(key);
             if (!buffer.isInitOk()) {
                 synchronized (buffer) {
