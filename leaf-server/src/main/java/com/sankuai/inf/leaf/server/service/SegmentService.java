@@ -26,7 +26,7 @@ public class SegmentService {
 
     private final IDGen idGen;
 
-  public SegmentService() throws SQLException, InitException {
+    public SegmentService() throws SQLException, InitException {
         Properties properties = PropertyFactory.getProperties();
         boolean flag = Boolean.parseBoolean(properties.getProperty(Constants.LEAF_SEGMENT_ENABLE, "true"));
         if (flag) {

@@ -15,6 +15,7 @@ import javax.sql.DataSource;
 import java.util.List;
 
 /**
+ *
  * @author mickle
  */
 public class IDAllocDaoImpl implements IDAllocDao {
@@ -32,25 +33,27 @@ public class IDAllocDaoImpl implements IDAllocDao {
     @Override
     public List<LeafAlloc> getAllLeafAllocs() {
       try (SqlSession sqlSession = sqlSessionFactory.openSession(false)) {
-        return sqlSession.selectList("com.sankuai.inf.leaf.segment.dao.IDAllocMapper.getAllLeafAllocs");
+        IDAllocMapper mapper = sqlSession.getMapper(IDAllocMapper.class);
+        return mapper.getAllLeafAllocs();
       }
     }
 
     @Override
     public LeafAlloc updateMaxIdAndGetLeafAlloc(String tag) {
       try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
-        sqlSession.update("com.sankuai.inf.leaf.segment.dao.IDAllocMapper.updateMaxId", tag);
-        LeafAlloc result = sqlSession.selectOne("com.sankuai.inf.leaf.segment.dao.IDAllocMapper.getLeafAlloc", tag);
+        IDAllocMapper mapper = sqlSession.getMapper(IDAllocMapper.class);
+        mapper.updateMaxId(tag);
         sqlSession.commit();
-        return result;
+        return mapper.getLeafAlloc(tag);
       }
     }
 
     @Override
     public LeafAlloc updateMaxIdByCustomStepAndGetLeafAlloc(LeafAlloc leafAlloc) {
       try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
-        sqlSession.update("com.sankuai.inf.leaf.segment.dao.IDAllocMapper.updateMaxIdByCustomStep", leafAlloc);
-        LeafAlloc result = sqlSession.selectOne("com.sankuai.inf.leaf.segment.dao.IDAllocMapper.getLeafAlloc", leafAlloc.getKey());
+        IDAllocMapper mapper = sqlSession.getMapper(IDAllocMapper.class);
+        mapper.updateMaxIdByCustomStep(leafAlloc);
+        LeafAlloc result = mapper.getLeafAlloc(leafAlloc.getKey());
         sqlSession.commit();
         return result;
       }
@@ -59,7 +62,8 @@ public class IDAllocDaoImpl implements IDAllocDao {
     @Override
     public List<String> getAllTags() {
       try (SqlSession sqlSession = sqlSessionFactory.openSession(false)) {
-        return sqlSession.selectList("com.sankuai.inf.leaf.segment.dao.IDAllocMapper.getAllTags");
+        IDAllocMapper mapper = sqlSession.getMapper(IDAllocMapper.class);
+        return mapper.getAllTags();
       }
     }
 }

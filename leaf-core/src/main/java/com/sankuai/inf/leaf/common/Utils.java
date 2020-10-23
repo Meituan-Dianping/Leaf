@@ -12,11 +12,16 @@ import java.util.Enumeration;
 import java.util.List;
 
 /**
+ * 网卡工具类
  * @author mickle
  */
 public class Utils {
     private static final Logger logger = LoggerFactory.getLogger(Utils.class);
 
+    /**
+     * 获取第一个激活网卡的 IP 地址
+     * @return                    IP地址
+     */
     public static String getIp() {
         String ip;
         try {
@@ -30,6 +35,11 @@ public class Utils {
         return ip;
     }
 
+    /**
+     * 根据网卡名称获取第一个 IP 地址
+     * @param interfaceName       网卡名称
+     * @return                    IP 地址
+     */
     public static String getIp(String interfaceName) {
         String ip;
         interfaceName = interfaceName.trim();

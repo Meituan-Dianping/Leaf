@@ -1,6 +1,8 @@
 package com.sankuai.inf.leaf.common;
 
 /**
+ * 通用响应对象
+ *
  * @author mickle
  */
 public class Result {

@@ -41,7 +41,13 @@ public class SegmentIDGenImpl implements IDGen {
      */
     private static final long SEGMENT_DURATION = 15 * 60 * 1000L;
     private final ExecutorService service = new ThreadPoolExecutor(5, Integer.MAX_VALUE, 60L, TimeUnit.SECONDS, new SynchronousQueue<Runnable>(), new UpdateThreadFactory());
-    private volatile boolean initOK = false;
+    /**
+     * 初始化是否成功
+     */
+    private volatile boolean initSuccess = false;
+    /**
+     * 业务标识，双 Segment
+     */
     private final Map<String, SegmentBuffer> cache = new ConcurrentHashMap<String, SegmentBuffer>();
     private IDAllocDao dao;
 
@@ -64,11 +70,14 @@ public class SegmentIDGenImpl implements IDGen {
         logger.info("Init ...");
         // 确保加载到kv后才初始化成功
         updateCacheFromDb();
-        initOK = true;
+        initSuccess = true;
         updateCacheFromDbAtEveryMinute();
-        return initOK;
+        return initSuccess;
     }
 
+    /**
+     * 定时每分钟从数据库中获取数据存入 cache 中
+     */
     private void updateCacheFromDbAtEveryMinute() {
         ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor(new ThreadFactory() {
             @Override
@@ -87,11 +96,17 @@ public class SegmentIDGenImpl implements IDGen {
         }, 60, 60, TimeUnit.SECONDS);
     }
 
+    /**
+     * 从数据库中存入数据到 cache 中
+     */
     private void updateCacheFromDb() {
         logger.info("update cache from db");
         StopWatch sw = new Slf4JStopWatch();
         try {
+            // 获取数据库中所有业务标识
             List<String> dbTags = dao.getAllTags();
+
+            // 没有业务标识直接返回
             if (dbTags == null || dbTags.isEmpty()) {
                 return;
             }
@@ -129,7 +144,7 @@ public class SegmentIDGenImpl implements IDGen {
 
     @Override
     public Result get(final String key) {
-        if (!initOK) {
+        if (!initSuccess) {
             return new Result(EXCEPTION_ID_IDCACHE_INIT_FALSE, Status.EXCEPTION);
         }
         if (cache.containsKey(key)) {

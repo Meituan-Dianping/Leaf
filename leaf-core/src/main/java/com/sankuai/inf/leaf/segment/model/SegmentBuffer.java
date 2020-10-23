@@ -17,11 +17,11 @@ public class SegmentBuffer {
      */
     private final Segment[] segments;
     /**
-     * 当前的使用的segment的index
+     * 当前的使用的 segment 的 index
      */
     private volatile int currentPos;
     /**
-     * 下一个segment是否处于可切换状态
+     * 下一个 segment 是否处于可切换状态
      */
     private volatile boolean nextReady;
     /**
