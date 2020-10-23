@@ -119,9 +119,9 @@ public class SegmentIDGenImpl implements IDGen {
 //            for (String tmp : cacheTags) {
 //              insertTagsSet.remove(tmp);
 //            }
-          // 感觉可以优化： 新增 set 中去除 cache 中已存在的 tag
-          insertTagsSet.removeAll(cacheTags);
-          // 往 cache 中存入未缓存的 SegmentBuffer
+            // 感觉可以优化： 新增 set 中去除 cache 中已存在的 tag
+            insertTagsSet.removeAll(cacheTags);
+            // 往 cache 中存入未缓存的 SegmentBuffer
             for (String tag : insertTagsSet) {
                 SegmentBuffer buffer = new SegmentBuffer();
                 buffer.setKey(tag);
@@ -164,6 +164,7 @@ public class SegmentIDGenImpl implements IDGen {
         if (cache.containsKey(key)) {
             // 获取业务对应的SegmentBuffer
             SegmentBuffer buffer = cache.get(key);
+
             if (!buffer.isInitOk()) {
                 synchronized (buffer) {
                     if (!buffer.isInitOk()) {
@@ -179,6 +180,7 @@ public class SegmentIDGenImpl implements IDGen {
             }
             return getIdFromSegmentBuffer(cache.get(key));
         }
+        // cache中无业务tag对象的SegmentBuffer缓存则返回业务不存在异常码
         return new Result(EXCEPTION_ID_KEY_NOT_EXISTS, Status.EXCEPTION);
     }
 
