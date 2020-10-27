@@ -225,8 +225,12 @@ public class SegmentIDGenImpl implements IDGen {
 
             // 当前时间和上一次修改时间距离的毫秒数
             long duration = System.currentTimeMillis() - buffer.getUpdateTimestamp();
+            // 下一次增加数量
             int nextStep = buffer.getStep();
-            // 如果相差毫秒数小于一个Segment维持时间
+            // 相差毫秒数小于一个Segment维持时间
+            // 如果距离上一次更新时间小于一个Segment维持时间
+            // 则表示获取id的速率较快，则增大step减少扩容时间
+            // 在step不大于MAX_STEP时，则进行扩容
             if (duration < SEGMENT_DURATION) {
 //                if (nextStep * 2 > MAX_STEP) {
 //                    //do nothing
@@ -236,25 +240,30 @@ public class SegmentIDGenImpl implements IDGen {
                 if (nextStep * factory <= MAX_STEP) {
                     nextStep = nextStep * factory;
                 }
-            } else if (duration < SEGMENT_DURATION * 2) {
-                //do nothing with nextStep
-            } else {
-                nextStep = nextStep / 2 >= buffer.getMinStep() ? nextStep / 2 : nextStep;
+            } else if (duration >= SEGMENT_DURATION * factory) {
+                // 如果距离上一次更新时间大于2倍一个Segment维持时间
+                // 表示获取id速度较慢，则进行缩容
+                nextStep = nextStep / 2 >= buffer.getMinStep() ? nextStep / factory : nextStep;
             }
             logger.info("leafKey[{}], step[{}], duration[{}mins], nextStep[{}]", key, buffer.getStep(), String.format("%.2f",((double)duration / (1000 * 60))), nextStep);
             LeafAlloc temp = new LeafAlloc();
             temp.setKey(key);
             temp.setStep(nextStep);
+            // 更新改业务tag的max_id
             leafAlloc = dao.updateMaxIdByCustomStepAndGetLeafAlloc(temp);
             buffer.setUpdateTimestamp(System.currentTimeMillis());
+            // 设置下一次增长数量
             buffer.setStep(nextStep);
-            // leafAlloc的step为DB中的step
+            // 设置下一次最小增长数量
             buffer.setMinStep(leafAlloc.getStep());
         }
-        // must set value before set max
+        // 起始值
         long value = leafAlloc.getMaxId() - buffer.getStep();
+        // 设置当前segment的当前值
         segment.getValue().set(value);
+        // 设置当前segment的max_id（结束值）
         segment.setMax(leafAlloc.getMaxId());
+        // 设置当前segment的step
         segment.setStep(buffer.getStep());
         sw.stop("updateSegmentFromDb", key + " " + segment);
     }
