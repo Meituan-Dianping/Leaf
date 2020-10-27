@@ -34,8 +34,17 @@ public class SegmentBuffer {
     private final AtomicBoolean threadRunning;
     private final ReadWriteLock lock;
 
+    /**
+     * 增长步长
+     */
     private volatile int step;
+    /**
+     * 增长最小步长
+     */
     private volatile int minStep;
+    /**
+     * 更新时间
+     */
     private volatile long updateTimestamp;
 
     public SegmentBuffer() {

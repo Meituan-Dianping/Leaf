@@ -50,6 +50,10 @@ public class SegmentIDGenImpl implements IDGen {
      */
     private final Map<String, SegmentBuffer> cache = new ConcurrentHashMap<String, SegmentBuffer>();
     private IDAllocDao dao;
+    /**
+     * 增长因子
+     */
+    private final int factory = 2;
 
     public static class UpdateThreadFactory implements ThreadFactory {
 
@@ -77,6 +81,8 @@ public class SegmentIDGenImpl implements IDGen {
 
     /**
      * 定时每分钟从数据库中加载tag到cache中
+     *
+     * 对比数据库中和cache中的业务，新增则往cache中添加，删除则从cache中删除
      */
     private void updateCacheFromDbAtEveryMinute() {
         ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor(new ThreadFactory() {
@@ -119,9 +125,9 @@ public class SegmentIDGenImpl implements IDGen {
 //            for (String tmp : cacheTags) {
 //              insertTagsSet.remove(tmp);
 //            }
-            // 感觉可以优化： 新增 set 中去除 cache 中已存在的 tag
+            // 感觉可以优化： 数据库中 tag 和 cache 中对比，找出数据库新增的 tag
             insertTagsSet.removeAll(cacheTags);
-            // 往 cache 中存入未缓存的 SegmentBuffer
+            // 将数据库中新增的tag加入cache
             for (String tag : insertTagsSet) {
                 SegmentBuffer buffer = new SegmentBuffer();
                 buffer.setKey(tag);
@@ -136,8 +142,9 @@ public class SegmentIDGenImpl implements IDGen {
 //            for (String tmp : dbTags) {
 //              removeTagsSet.remove(tmp);
 //            }
+            // 数据库与cache对比，找出数据库库中删除的tag
             removeTagsSet.removeAll(dbTags);
-
+            // 将数据库中删除的tag从cache中删除
             for (String tag : removeTagsSet) {
                 cache.remove(tag);
                 logger.info("Remove tag {} from IdCache", tag);
@@ -164,13 +171,15 @@ public class SegmentIDGenImpl implements IDGen {
         if (cache.containsKey(key)) {
             // 获取业务对应的SegmentBuffer
             SegmentBuffer buffer = cache.get(key);
-
+            // 双重判断SegmentBuffer是否初始化完毕
             if (!buffer.isInitOk()) {
                 synchronized (buffer) {
                     if (!buffer.isInitOk()) {
                         try {
+                            // 如果未初始化成功则初始化当前SegmentBuffer选择的Segment
                             updateSegmentFromDb(key, buffer.getCurrent());
                             logger.info("Init buffer. Update leafkey {} {} from db", key, buffer.getCurrent());
+                            // 设置SegmentBuffer初始化成功
                             buffer.setInitOk(true);
                         } catch (Exception e) {
                             logger.warn("Init buffer {} exception", buffer.getCurrent(), e);
@@ -178,35 +187,54 @@ public class SegmentIDGenImpl implements IDGen {
                     }
                 }
             }
+            // 获取该业务tag的下个id
             return getIdFromSegmentBuffer(cache.get(key));
         }
         // cache中无业务tag对象的SegmentBuffer缓存则返回业务不存在异常码
         return new Result(EXCEPTION_ID_KEY_NOT_EXISTS, Status.EXCEPTION);
     }
 
+    /**
+     * 从数据库加载数据到Segment中
+     * @param key               业务tag
+     * @param segment           对应SegmentBuffer中当前选中的Segment
+     */
     public void updateSegmentFromDb(String key, Segment segment) {
         StopWatch sw = new Slf4JStopWatch();
         SegmentBuffer buffer = segment.getBuffer();
         LeafAlloc leafAlloc;
+        // buffer 为初始化成功
         if (!buffer.isInitOk()) {
+            // 更新 max_id 为 max_id + step
             leafAlloc = dao.updateMaxIdAndGetLeafAlloc(key);
+            // 设置buffer中的step为DB中的step
             buffer.setStep(leafAlloc.getStep());
-            // leafAlloc中的step为DB中的step
+            // 设置buffer中的min_step为DB中的step
             buffer.setMinStep(leafAlloc.getStep());
         } else if (buffer.getUpdateTimestamp() == 0) {
+            // buffer 初始化成功，但是未设置过修改时间
             leafAlloc = dao.updateMaxIdAndGetLeafAlloc(key);
+            // 设置修改时间为当前时间
             buffer.setUpdateTimestamp(System.currentTimeMillis());
+            // 设置buffer中的step为DB中的step
             buffer.setStep(leafAlloc.getStep());
-            // leafAlloc中的step为DB中的step
+            // 设置buffer中的min_step为DB中的step
             buffer.setMinStep(leafAlloc.getStep());
         } else {
+            // buffer成功初始化并且已设置过修改时间
+
+            // 当前时间和上一次修改时间距离的毫秒数
             long duration = System.currentTimeMillis() - buffer.getUpdateTimestamp();
             int nextStep = buffer.getStep();
+            // 如果相差毫秒数小于一个Segment维持时间
             if (duration < SEGMENT_DURATION) {
-                if (nextStep * 2 > MAX_STEP) {
-                    //do nothing
-                } else {
-                    nextStep = nextStep * 2;
+//                if (nextStep * 2 > MAX_STEP) {
+//                    //do nothing
+//                } else {
+//                    nextStep = nextStep * 2;
+//                }
+                if (nextStep * factory <= MAX_STEP) {
+                    nextStep = nextStep * factory;
                 }
             } else if (duration < SEGMENT_DURATION * 2) {
                 //do nothing with nextStep

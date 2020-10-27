@@ -40,30 +40,30 @@ public class IDAllocDaoImpl implements IDAllocDao {
 
     @Override
     public LeafAlloc updateMaxIdAndGetLeafAlloc(String tag) {
-      try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
-        IDAllocMapper mapper = sqlSession.getMapper(IDAllocMapper.class);
-        mapper.updateMaxId(tag);
-        sqlSession.commit();
-        return mapper.getLeafAlloc(tag);
-      }
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            IDAllocMapper mapper = sqlSession.getMapper(IDAllocMapper.class);
+            mapper.updateMaxId(tag);
+            sqlSession.commit();
+            return mapper.getLeafAlloc(tag);
+        }
     }
 
     @Override
     public LeafAlloc updateMaxIdByCustomStepAndGetLeafAlloc(LeafAlloc leafAlloc) {
-      try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
-        IDAllocMapper mapper = sqlSession.getMapper(IDAllocMapper.class);
-        mapper.updateMaxIdByCustomStep(leafAlloc);
-        LeafAlloc result = mapper.getLeafAlloc(leafAlloc.getKey());
-        sqlSession.commit();
-        return result;
-      }
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            IDAllocMapper mapper = sqlSession.getMapper(IDAllocMapper.class);
+            mapper.updateMaxIdByCustomStep(leafAlloc);
+            LeafAlloc result = mapper.getLeafAlloc(leafAlloc.getKey());
+            sqlSession.commit();
+            return result;
+        }
     }
 
     @Override
     public List<String> getAllTags() {
-      try (SqlSession sqlSession = sqlSessionFactory.openSession(false)) {
-        IDAllocMapper mapper = sqlSession.getMapper(IDAllocMapper.class);
-        return mapper.getAllTags();
-      }
+        try (SqlSession sqlSession = sqlSessionFactory.openSession(false)) {
+            IDAllocMapper mapper = sqlSession.getMapper(IDAllocMapper.class);
+            return mapper.getAllTags();
+        }
     }
 }
