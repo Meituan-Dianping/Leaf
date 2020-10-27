@@ -268,10 +268,17 @@ public class SegmentIDGenImpl implements IDGen {
         sw.stop("updateSegmentFromDb", key + " " + segment);
     }
 
+    /**
+     * 从SegmentBuffer中获取下个业务id
+     * @param buffer            SegmentBuffer
+     * @return                  id
+     */
     public Result getIdFromSegmentBuffer(final SegmentBuffer buffer) {
         while (true) {
+            // 获取读锁
             buffer.rLock().lock();
             try {
+                // 获取当前正在使用的segment
                 final Segment segment = buffer.getCurrent();
                 if (!buffer.isNextReady() && (segment.getIdle() < 0.9 * segment.getStep()) && buffer.getThreadRunning().compareAndSet(false, true)) {
                     service.execute(new Runnable() {
