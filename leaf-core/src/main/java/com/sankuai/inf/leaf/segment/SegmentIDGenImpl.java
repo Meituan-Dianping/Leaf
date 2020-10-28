@@ -280,59 +280,86 @@ public class SegmentIDGenImpl implements IDGen {
             try {
                 // 获取当前正在使用的segment
                 final Segment segment = buffer.getCurrent();
-                if (!buffer.isNextReady() && (segment.getIdle() < 0.9 * segment.getStep()) && buffer.getThreadRunning().compareAndSet(false, true)) {
+                // 下一个segment为不可切换状态 && 当前segment已使用超过10% && buffer的线程状态为false
+                // 预热下一个segment
+                if (!buffer.isNextReady() && (segment.getIdle() < 0.9 * segment.getStep())
+                    && buffer.getThreadRunning().compareAndSet(false, true)) {
                     service.execute(new Runnable() {
                         @Override
                         public void run() {
-                            Segment next = buffer.getSegments()[buffer.nextPos()];
-                            boolean updateOk = false;
-                            try {
-                                updateSegmentFromDb(buffer.getKey(), next);
-                                updateOk = true;
-                                logger.info("update segment {} from db {}", buffer.getKey(), next);
-                            } catch (Exception e) {
-                                logger.warn(buffer.getKey() + " updateSegmentFromDb exception", e);
-                            } finally {
-                                if (updateOk) {
-                                    buffer.wLock().lock();
-                                    buffer.setNextReady(true);
-                                    buffer.getThreadRunning().set(false);
-                                    buffer.wLock().unlock();
-                                } else {
-                                    buffer.getThreadRunning().set(false);
-                                }
+                        // 下一个待切换segment
+                        Segment next = buffer.getSegments()[buffer.nextPos()];
+                        boolean updateOk = false;
+                        try {
+                            // 提前将数据加载到待切换segment
+                            updateSegmentFromDb(buffer.getKey(), next);
+                            updateOk = true;
+                            logger.info("update segment {} from db {}", buffer.getKey(), next);
+                        } catch (Exception e) {
+                            logger.warn(buffer.getKey() + " updateSegmentFromDb exception", e);
+                        } finally {
+                            // 如果数据加载成功
+                            if (updateOk) {
+                                // 获得写锁
+                                buffer.wLock().lock();
+                                // 设置下一个segment可切换状态为true
+                                buffer.setNextReady(true);
+                                // 设置buffer线程运行状态为false
+                                buffer.getThreadRunning().set(false);
+                                // 释放写锁
+                                buffer.wLock().unlock();
+                            } else {
+                                buffer.getThreadRunning().set(false);
                             }
+                        }
                         }
                     });
                 }
+                // 获取下一个id
                 long value = segment.getValue().getAndIncrement();
+                // 如果未超过最大则直接返回
                 if (value < segment.getMax()) {
                     return new Result(value, Status.SUCCESS);
                 }
             } finally {
+                // 释放读锁
                 buffer.rLock().unlock();
             }
+
+            // 上述预热下一个segment出现异常，并且buffer线程运行状态还未设置成false时
+            // 进行等待 100 秒，超时则抛出异常
             waitAndSleep(buffer);
+
+            // 获得写锁
             buffer.wLock().lock();
             try {
                 final Segment segment = buffer.getCurrent();
+                // 获取下一个id
                 long value = segment.getValue().getAndIncrement();
+                // 如果未超过最大则直接返回
                 if (value < segment.getMax()) {
                     return new Result(value, Status.SUCCESS);
                 }
+                // 如果号段已耗尽则准备切换下一个准备好的segment
                 if (buffer.isNextReady()) {
                     buffer.switchPos();
                     buffer.setNextReady(false);
                 } else {
+                    // 下个 segment 未成功初始化则返回未从DB中装载的异常码
                     logger.error("Both two segments in {} are not ready!", buffer);
                     return new Result(EXCEPTION_ID_TWO_SEGMENTS_ARE_NULL, Status.EXCEPTION);
                 }
             } finally {
+                // 释放写锁
                 buffer.wLock().unlock();
             }
         }
     }
 
+    /**
+     * 睡眠并等待buffer中线程运行状态为false
+     * @param buffer
+     */
     private void waitAndSleep(SegmentBuffer buffer) {
         int roll = 0;
         while (buffer.getThreadRunning().get()) {
