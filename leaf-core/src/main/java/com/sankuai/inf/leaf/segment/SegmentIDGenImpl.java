@@ -281,7 +281,7 @@ public class SegmentIDGenImpl implements IDGen {
                 // 获取当前正在使用的segment
                 final Segment segment = buffer.getCurrent();
                 // 下一个segment为不可切换状态 && 当前segment已使用超过10% && buffer的线程状态为false
-                // 预热下一个segment
+                // 预加载下一批号段
                 if (!buffer.isNextReady() && (segment.getIdle() < 0.9 * segment.getStep())
                     && buffer.getThreadRunning().compareAndSet(false, true)) {
                     service.execute(new Runnable() {
@@ -326,7 +326,7 @@ public class SegmentIDGenImpl implements IDGen {
                 buffer.rLock().unlock();
             }
 
-            // 上述预热下一个segment出现异常，并且buffer线程运行状态还未设置成false时
+            // 等待预加载号段线程执行完毕
             // 进行等待 100 秒，超时则抛出异常
             waitAndSleep(buffer);
 
@@ -357,7 +357,7 @@ public class SegmentIDGenImpl implements IDGen {
     }
 
     /**
-     * 睡眠并等待buffer中线程运行状态为false
+     * 睡眠并等待预加载号段线程执行完毕
      * @param buffer
      */
     private void waitAndSleep(SegmentBuffer buffer) {
