@@ -10,7 +10,7 @@
 
 Leaf refers to some common ID generation schemes in the industry, including redis, UUID, snowflake, etc.
 Each of the above approaches has its own problems, so we decided to implement a set of distributed ID generation services to meet the requirements.
-At present, Leaf covers Meituan review company's internal finance, catering, takeaway, hotel travel, cat's eye movie and many other business lines. On the basis of 4C8G VM, through the company RPC method, QPS pressure test results are nearly 5w/s, TP999 1ms.
+At present, Leaf covers Meituan review company's internal finance, catering, takeaway, hotel travel, cat's eye movie, and many other business lines. On the basis of 4C8G VM, through the company RPC method, QPS pressure test results are nearly 5w/s, TP999 1ms.
 
 You can use it to encapsulate a distributed unique id distribution center in a service-oriented SOA architecture as the id distribution provider for all applications
 
@@ -75,7 +75,7 @@ Leaf Server configuration is in the leaf-server/src/main/resources/leaf.properti
 
 In order to use segment mode, you need to create DB table first, and configure leaf.jdbc.url, leaf.jdbc.username, leaf.jdbc.password
 
-If you do not want use it, just configure leaf.segment.enable=false to disable it.
+If you do not want to use it, just configure leaf.segment.enable=false to disable it.
 
 ```sql
 CREATE DATABASE leaf
@@ -116,3 +116,4 @@ Of course, in order to pursue higher performance, you need to deploy the Leaf se
 
 #### Attention
 Note that leaf's current IP acquisition logic in the case of snowflake mode takes the first network card IP directly (especially for services that change IP) to avoid wasting the workId
+
