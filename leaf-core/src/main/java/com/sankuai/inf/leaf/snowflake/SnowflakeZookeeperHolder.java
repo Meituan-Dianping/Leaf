@@ -39,16 +39,34 @@ public class SnowflakeZookeeperHolder {
      * 保存自身的key ip:port
      */
     private String listenAddress = null;
+    /**
+     * 机器号
+     */
     private int workerId;
+    /**
+     * zk路径前缀
+     */
     private static final String PREFIX_ZK_PATH = "/snowflake/" + PropertyFactory.getProperties().getProperty("leaf.name");
     private static final String PROP_PATH = System.getProperty("java.io.tmpdir") + File.separator + PropertyFactory.getProperties().getProperty("leaf.name") + "/leafconf/{port}/workerID.properties";
     /**
      * 保存所有数据持久的节点
      */
     private static final String PATH_FOREVER = PREFIX_ZK_PATH + "/forever";
+    /**
+     * 本机ip
+     */
     private final String ip;
+    /**
+     * 端口号
+     */
     private final String port;
+    /**
+     * zk连接字符串
+     */
     private final String connectionString;
+    /**
+     * 上次上报时间
+     */
     private long lastUpdateTime;
 
     public SnowflakeZookeeperHolder(String ip, String port, String connectionString) {
@@ -182,7 +200,7 @@ public class SnowflakeZookeeperHolder {
     /**
      * 构建需要上传的数据
      *
-     * @return
+     * @return          Endpoint
      */
     private String buildData() throws JsonProcessingException {
         Endpoint endpoint = new Endpoint(ip, port, System.currentTimeMillis());
@@ -190,6 +208,12 @@ public class SnowflakeZookeeperHolder {
         return mapper.writeValueAsString(endpoint);
     }
 
+    /**
+     * 解析zk数据
+     * @param json            字符数据
+     * @return
+     * @throws IOException
+     */
     private Endpoint deBuildData(String json) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         return mapper.readValue(json, Endpoint.class);

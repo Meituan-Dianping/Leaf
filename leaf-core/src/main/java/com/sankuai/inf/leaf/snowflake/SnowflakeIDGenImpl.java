@@ -131,22 +131,30 @@ public class SnowflakeIDGenImpl implements IDGen {
             }
         }
         if (lastTimestamp == timestamp) {
+            // 同1ms获取多个，递增序列号作为区分
             sequence = (sequence + 1) & sequenceMask;
             if (sequence == 0) {
+                // seq 为 0 时表示当前1ms内号段已发完等待下1ms
                 //seq 为0的时候表示是下一毫秒时间开始对seq做随机
                 sequence = RANDOM.nextInt(100);
                 timestamp = tilNextMillis(lastTimestamp);
             }
         } else {
-            //如果是新的ms开始
+            //如果是新的ms开始，随机生成一个序列
             sequence = RANDOM.nextInt(100);
         }
         lastTimestamp = timestamp;
+        // 标志位(1)  时间戳为(41)  机器号(10) 序列号(12)
         long id = ((timestamp - twepoch) << timestampLeftShift) | (workerId << workerIdShift) | sequence;
         return new Result(id, Status.SUCCESS);
 
     }
 
+    /**
+     * 等待至下1ms
+     * @param lastTimestamp     上次修改时间
+     * @return                  最新当前时间
+     */
     protected long tilNextMillis(long lastTimestamp) {
         long timestamp = timeGen();
         while (timestamp <= lastTimestamp) {
