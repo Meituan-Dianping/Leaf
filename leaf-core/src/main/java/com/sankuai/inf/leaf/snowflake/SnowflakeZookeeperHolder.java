@@ -101,6 +101,7 @@ public class SnowflakeZookeeperHolder {
                     realNode.put(nodeKey[0], key);
                     nodeMap.put(nodeKey[0], Integer.parseInt(nodeKey[1]));
                 }
+                // 获取机器👌
                 Integer workerid = nodeMap.get(listenAddress);
                 if (workerid != null) {
                     // 有自己的节点,zkAddressNode=ip:port
@@ -110,8 +111,9 @@ public class SnowflakeZookeeperHolder {
                     if (!checkInitTimeStamp(curator, zkAddressNode)) {
                         throw new CheckLastTimeException("init timestamp check error,forever node timestamp gt this node time");
                     }
-                    //准备创建临时节点
+                    //定时上报本机时间给forever节点
                     doService(curator);
+                    // 本地缓存机器号
                     updateLocalWorkerID(workerId);
                     LOGGER.info("[Old NODE]find forever node have this endpoint ip-{} port-{} workid-{} childnode and start SUCCESS", ip, port, workerId);
                 } else {
@@ -120,7 +122,9 @@ public class SnowflakeZookeeperHolder {
                     zkAddressNode = newNode;
                     String[] nodeKey = newNode.split("-");
                     workerId = Integer.parseInt(nodeKey[1]);
+                    //定时上报本机时间给forever节点
                     doService(curator);
+                    // 本地缓存机器号
                     updateLocalWorkerID(workerId);
                     LOGGER.info("[New NODE]can not find node on forever node that endpoint ip-{} port-{} workid-{},create own node on forever node and start SUCCESS ", ip, port, workerId);
                 }
@@ -145,7 +149,13 @@ public class SnowflakeZookeeperHolder {
         scheduledUploadData(curator, zkAddressNode);
     }
 
+    /**
+     * 定时上报数据至zk
+     * @param curator
+     * @param zkAddressNode
+     */
     private void scheduledUploadData(final CuratorFramework curator, final String zkAddressNode) {
+        // 每3s上报数据
         Executors.newSingleThreadScheduledExecutor(new ThreadFactory() {
             @Override
             public Thread newThread(Runnable r) {
@@ -158,22 +168,31 @@ public class SnowflakeZookeeperHolder {
             public void run() {
                 updateNewData(curator, zkAddressNode);
             }
-        }, 1L, 3L, TimeUnit.SECONDS);//每3s上报数据
+        }, 1L, 3L, TimeUnit.SECONDS);
 
     }
 
+    /**
+     * 检查初始化时间戳
+     * 该节点当前的时间不能小于最后一次上报的时间
+     * @param curator
+     * @param zkAddressNode
+     * @return
+     * @throws Exception
+     */
     private boolean checkInitTimeStamp(CuratorFramework curator, String zkAddressNode) throws Exception {
         byte[] bytes = curator.getData().forPath(zkAddressNode);
         Endpoint endPoint = deBuildData(new String(bytes));
-        //该节点的时间不能小于最后一次上报的时间
+        //该节点当前的时间不能小于最后一次上报的时间
         return endPoint.getTimestamp() <= System.currentTimeMillis();
     }
 
     /**
      * 创建持久顺序节点 ,并把节点数据放入 value
+     * 自动在路径后加顺序编号
      *
      * @param curator
-     * @return
+     * @return            节点
      * @throws Exception
      */
     private String createNode(CuratorFramework curator) throws Exception {
@@ -185,6 +204,11 @@ public class SnowflakeZookeeperHolder {
         }
     }
 
+    /**
+     * 修改节点值
+     * @param curator
+     * @param path
+     */
     private void updateNewData(CuratorFramework curator, String path) {
         try {
             if (System.currentTimeMillis() < lastUpdateTime) {
