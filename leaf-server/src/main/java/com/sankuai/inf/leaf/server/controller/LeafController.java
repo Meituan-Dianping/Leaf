@@ -13,13 +13,15 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
+
 @RestController
 public class LeafController {
     private Logger logger = LoggerFactory.getLogger(LeafController.class);
 
-    @Autowired
+    @Resource
     private SegmentService segmentService;
-    @Autowired
+    @Resource
     private SnowflakeService snowflakeService;
 
     @RequestMapping(value = "/api/segment/get/{key}")
@@ -32,7 +34,7 @@ public class LeafController {
         return get(key, snowflakeService.getId(key));
     }
 
-    private String get(@PathVariable("key") String key, Result id) {
+    private String get(String key, Result id) {
         Result result;
         if (key == null || key.isEmpty()) {
             throw new NoKeyException();
