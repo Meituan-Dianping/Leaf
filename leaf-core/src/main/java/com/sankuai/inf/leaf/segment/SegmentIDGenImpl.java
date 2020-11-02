@@ -37,9 +37,9 @@ public class SegmentIDGenImpl implements IDGen {
      * 一个Segment维持时间为15分钟
      */
     private static final long SEGMENT_DURATION = 15 * 60 * 1000L;
-    private ExecutorService service = new ThreadPoolExecutor(5, Integer.MAX_VALUE, 60L, TimeUnit.SECONDS, new SynchronousQueue<Runnable>(), new UpdateThreadFactory());
+    private final ExecutorService service = new ThreadPoolExecutor(5, Integer.MAX_VALUE, 60L, TimeUnit.SECONDS, new SynchronousQueue<Runnable>(), new UpdateThreadFactory());
     private volatile boolean initOK = false;
-    private Map<String, SegmentBuffer> cache = new ConcurrentHashMap<String, SegmentBuffer>();
+    private final Map<String, SegmentBuffer> cache = new ConcurrentHashMap<String, SegmentBuffer>();
     private IDAllocDao dao;
 
     public static class UpdateThreadFactory implements ThreadFactory {
@@ -92,36 +92,26 @@ public class SegmentIDGenImpl implements IDGen {
             if (dbTags == null || dbTags.isEmpty()) {
                 return;
             }
+            // 可进行优化，实际使用时只需要对比cache和数据库中的业务标识，少则增加，多则移除
             List<String> cacheTags = new ArrayList<String>(cache.keySet());
-            Set<String> insertTagsSet = new HashSet<>(dbTags);
-            Set<String> removeTagsSet = new HashSet<>(cacheTags);
-            //db中新加的tags灌进cache
-            for(int i = 0; i < cacheTags.size(); i++){
-                String tmp = cacheTags.get(i);
-                if(insertTagsSet.contains(tmp)){
-                    insertTagsSet.remove(tmp);
+            for (String dbTag : dbTags) {
+                if (!cacheTags.contains(dbTag)) {
+                  SegmentBuffer buffer = new SegmentBuffer();
+                  buffer.setKey(dbTag);
+                  Segment segment = buffer.getCurrent();
+                  segment.setValue(new AtomicLong(0));
+                  segment.setMax(0);
+                  segment.setStep(0);
+                  cache.put(dbTag, buffer);
+                  logger.info("Add tag {} from db to IdCache, SegmentBuffer {}", dbTag, buffer);
                 }
             }
-            for (String tag : insertTagsSet) {
-                SegmentBuffer buffer = new SegmentBuffer();
-                buffer.setKey(tag);
-                Segment segment = buffer.getCurrent();
-                segment.setValue(new AtomicLong(0));
-                segment.setMax(0);
-                segment.setStep(0);
-                cache.put(tag, buffer);
-                logger.info("Add tag {} from db to IdCache, SegmentBuffer {}", tag, buffer);
-            }
-            //cache中已失效的tags从cache删除
-            for(int i = 0; i < dbTags.size(); i++){
-                String tmp = dbTags.get(i);
-                if(removeTagsSet.contains(tmp)){
-                    removeTagsSet.remove(tmp);
+            cacheTags = new ArrayList<>(cache.keySet());
+            for (String cacheTag : cacheTags) {
+                if (!dbTags.contains(cacheTag)) {
+                    cache.remove(cacheTag);
+                    logger.info("Remove tag {} from IdCache", cacheTag);
                 }
-            }
-            for (String tag : removeTagsSet) {
-                cache.remove(tag);
-                logger.info("Remove tag {} from IdCache", tag);
             }
         } catch (Exception e) {
             logger.warn("update cache from db exception", e);
