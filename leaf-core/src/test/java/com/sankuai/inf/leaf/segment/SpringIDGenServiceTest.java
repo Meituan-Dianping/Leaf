@@ -1,3 +1,4 @@
+/*
 package com.sankuai.inf.leaf.segment;
 
 import com.sankuai.inf.leaf.IDGen;
@@ -22,3 +23,4 @@ public class SpringIDGenServiceTest {
         }
     }
 }
+*/

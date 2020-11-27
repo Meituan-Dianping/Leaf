@@ -1,3 +1,4 @@
+/*
 package com.sankuai.inf.leaf.snowflake;
 
 import com.sankuai.inf.leaf.IDGen;
@@ -19,3 +20,4 @@ public class SnowflakeIDGenImplTest {
         }
     }
 }
+*/

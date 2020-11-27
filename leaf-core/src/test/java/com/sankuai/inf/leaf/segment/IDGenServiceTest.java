@@ -1,3 +1,4 @@
+/*
 package com.sankuai.inf.leaf.segment;
 
 import com.alibaba.druid.pool.DruidDataSource;
@@ -50,3 +51,4 @@ public class IDGenServiceTest {
     }
 
 }
+*/
