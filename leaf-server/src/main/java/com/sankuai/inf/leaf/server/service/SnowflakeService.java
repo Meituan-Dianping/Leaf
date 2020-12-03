@@ -15,7 +15,7 @@ import java.util.Properties;
 
 @Service("SnowflakeService")
 public class SnowflakeService {
-    private Logger logger = LoggerFactory.getLogger(SnowflakeService.class);
+    private static final Logger logger = LoggerFactory.getLogger(SnowflakeService.class);
 
     private IDGen idGen;
 

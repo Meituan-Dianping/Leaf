@@ -19,7 +19,7 @@ import java.util.Properties;
 
 @Service("SegmentService")
 public class SegmentService {
-    private Logger logger = LoggerFactory.getLogger(SegmentService.class);
+    private static final Logger logger = LoggerFactory.getLogger(SegmentService.class);
 
     private IDGen idGen;
     private DruidDataSource dataSource;
