@@ -44,11 +44,11 @@ public class LeafMonitorController {
             sv.setPos(buffer.getCurrentPos());
             sv.setNextReady(buffer.isNextReady());
             sv.setMax0(buffer.getSegments()[0].getMax());
-            sv.setValue0(buffer.getSegments()[0].getValue().get());
+            sv.setValue0(buffer.getSegments()[0].getValue().sum());
             sv.setStep0(buffer.getSegments()[0].getStep());
 
             sv.setMax1(buffer.getSegments()[1].getMax());
-            sv.setValue1(buffer.getSegments()[1].getValue().get());
+            sv.setValue1(buffer.getSegments()[1].getValue().sum());
             sv.setStep1(buffer.getSegments()[1].getStep());
 
             data.put(entry.getKey(), sv);
