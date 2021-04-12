@@ -1,9 +1,9 @@
 package com.sankuai.inf.leaf.segment.model;
 
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.LongAdder;
 
 public class Segment {
-    private AtomicLong value = new AtomicLong(0);
+    private LongAdder value = new LongAdder();
     private volatile long max;
     private volatile int step;
     private SegmentBuffer buffer;
@@ -12,11 +12,11 @@ public class Segment {
         this.buffer = buffer;
     }
 
-    public AtomicLong getValue() {
+    public LongAdder getValue() {
         return value;
     }
 
-    public void setValue(AtomicLong value) {
+    public void setValue(LongAdder value) {
         this.value = value;
     }
 
@@ -41,7 +41,7 @@ public class Segment {
     }
 
     public long getIdle() {
-        return this.getMax() - getValue().get();
+        return this.getMax() - getValue().sum();
     }
 
     @Override
@@ -55,5 +55,17 @@ public class Segment {
         sb.append(step);
         sb.append(")");
         return sb.toString();
+    }
+
+    // get then increment
+    public long getAndIncrement(){
+        long ret = value.sum();
+        value.increment();
+        return ret;
+    }
+
+    public void reset(long value) {
+        this.value.reset();
+        this.value.add(value);
     }
 }

@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.LongAdder;
 
 public class SegmentIDGenImpl implements IDGen {
     private static final Logger logger = LoggerFactory.getLogger(SegmentIDGenImpl.class);
@@ -106,7 +106,7 @@ public class SegmentIDGenImpl implements IDGen {
                 SegmentBuffer buffer = new SegmentBuffer();
                 buffer.setKey(tag);
                 Segment segment = buffer.getCurrent();
-                segment.setValue(new AtomicLong(0));
+                segment.setValue(new LongAdder());
                 segment.setMax(0);
                 segment.setStep(0);
                 cache.put(tag, buffer);
@@ -193,7 +193,7 @@ public class SegmentIDGenImpl implements IDGen {
         }
         // must set value before set max
         long value = leafAlloc.getMaxId() - buffer.getStep();
-        segment.getValue().set(value);
+        segment.reset(value);
         segment.setMax(leafAlloc.getMaxId());
         segment.setStep(buffer.getStep());
         sw.stop("updateSegmentFromDb", key + " " + segment);
@@ -229,7 +229,7 @@ public class SegmentIDGenImpl implements IDGen {
                         }
                     });
                 }
-                long value = segment.getValue().getAndIncrement();
+                long value = segment.getAndIncrement();
                 if (value < segment.getMax()) {
                     return new Result(value, Status.SUCCESS);
                 }
@@ -240,7 +240,7 @@ public class SegmentIDGenImpl implements IDGen {
             buffer.wLock().lock();
             try {
                 final Segment segment = buffer.getCurrent();
-                long value = segment.getValue().getAndIncrement();
+                long value = segment.getAndIncrement();
                 if (value < segment.getMax()) {
                     return new Result(value, Status.SUCCESS);
                 }
