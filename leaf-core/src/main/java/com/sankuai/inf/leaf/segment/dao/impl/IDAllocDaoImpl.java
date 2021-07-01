@@ -12,8 +12,8 @@ import org.apache.ibatis.transaction.TransactionFactory;
 import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
 
 import javax.sql.DataSource;
-import java.sql.SQLException;
 import java.util.List;
+import java.util.Set;
 
 public class IDAllocDaoImpl implements IDAllocDao {
 
@@ -68,6 +68,31 @@ public class IDAllocDaoImpl implements IDAllocDao {
         SqlSession sqlSession = sqlSessionFactory.openSession(false);
         try {
             return sqlSession.selectList("com.sankuai.inf.leaf.segment.dao.IDAllocMapper.getAllTags");
+        } finally {
+            sqlSession.close();
+        }
+    }
+
+    @Override
+    public int deleteAllocTags(List<String> deleteAllocTags) {
+        SqlSession sqlSession = sqlSessionFactory.openSession();
+        try {
+            int delete = sqlSession.delete("com.sankuai.inf.leaf.segment.dao.IDAllocMapper.deleteAllocTags", deleteAllocTags);
+            sqlSession.commit();
+            return delete;
+        } finally {
+            sqlSession.close();
+        }
+    }
+
+    @Override
+    public int insertTOLeafAllocTagList(List<String> insertTOLeafAllocTagList) {
+        SqlSession sqlSession = sqlSessionFactory.openSession();
+        try {
+            int insert = sqlSession.insert("com.sankuai.inf.leaf.segment.dao.IDAllocMapper.insertTOLeafAllocTagList",
+                    insertTOLeafAllocTagList);
+            sqlSession.commit();
+            return insert;
         } finally {
             sqlSession.close();
         }

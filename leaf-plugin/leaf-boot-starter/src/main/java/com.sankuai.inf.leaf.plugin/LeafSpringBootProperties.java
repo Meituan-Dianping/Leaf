@@ -15,12 +15,15 @@ import org.springframework.stereotype.Component;
 public class LeafSpringBootProperties {
     private String name;
     private Segment segment;
+    private DailySegment dailySegment;
     private Snowflake snowflake;
-    public static class Segment{
+
+    public static class DailySegment{
         private boolean enable=false;
         private String url;
         private String username;
         private String password;
+        private String driverClassName;
 
         public String getUrl() {
             return url;
@@ -44,6 +47,69 @@ public class LeafSpringBootProperties {
 
         public void setPassword(String password) {
             this.password = password;
+        }
+
+        public String getDriverClassName() {
+            return driverClassName;
+        }
+
+        public void setDriverClassName(String driverClassName) {
+            this.driverClassName = driverClassName;
+        }
+
+        public boolean isEnable() {
+            return enable;
+        }
+        public void setEnable(boolean enable) {
+            this.enable = enable;
+        }
+
+        @Override
+        public String toString() {
+            return "DailySegment{" +
+                    "enable=" + enable +
+                    '}';
+        }
+    }
+
+
+    public static class Segment{
+        private boolean enable=false;
+        private String url;
+        private String username;
+        private String password;
+        private String driverClassName;
+
+        public String getUrl() {
+            return url;
+        }
+
+        public void setUrl(String url) {
+            this.url = url;
+        }
+
+        public String getUsername() {
+            return username;
+        }
+
+        public void setUsername(String username) {
+            this.username = username;
+        }
+
+        public String getPassword() {
+            return password;
+        }
+
+        public void setPassword(String password) {
+            this.password = password;
+        }
+
+        public String getDriverClassName() {
+            return driverClassName;
+        }
+
+        public void setDriverClassName(String driverClassName) {
+            this.driverClassName = driverClassName;
         }
 
         public boolean isEnable() {
@@ -110,6 +176,14 @@ public class LeafSpringBootProperties {
 
     public void setSegment(Segment segment) {
         this.segment = segment;
+    }
+
+    public DailySegment getDailySegment() {
+        return dailySegment;
+    }
+
+    public void setDailySegment(DailySegment dailySegment) {
+        this.dailySegment = dailySegment;
     }
 
     public Snowflake getSnowflake() {

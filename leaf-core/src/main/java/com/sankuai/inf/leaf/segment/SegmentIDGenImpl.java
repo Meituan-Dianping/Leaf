@@ -38,9 +38,9 @@ public class SegmentIDGenImpl implements IDGen {
      */
     private static final long SEGMENT_DURATION = 15 * 60 * 1000L;
     private ExecutorService service = new ThreadPoolExecutor(5, Integer.MAX_VALUE, 60L, TimeUnit.SECONDS, new SynchronousQueue<Runnable>(), new UpdateThreadFactory());
-    private volatile boolean initOK = false;
+    protected volatile boolean initOK = false;
     private Map<String, SegmentBuffer> cache = new ConcurrentHashMap<String, SegmentBuffer>();
-    private IDAllocDao dao;
+    protected IDAllocDao dao;
 
     public static class UpdateThreadFactory implements ThreadFactory {
 
@@ -66,7 +66,7 @@ public class SegmentIDGenImpl implements IDGen {
         return initOK;
     }
 
-    private void updateCacheFromDbAtEveryMinute() {
+    protected void updateCacheFromDbAtEveryMinute() {
         ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor(new ThreadFactory() {
             @Override
             public Thread newThread(Runnable r) {
@@ -84,7 +84,7 @@ public class SegmentIDGenImpl implements IDGen {
         }, 60, 60, TimeUnit.SECONDS);
     }
 
-    private void updateCacheFromDb() {
+    protected void updateCacheFromDb() {
         logger.info("update cache from db");
         StopWatch sw = new Slf4JStopWatch();
         try {

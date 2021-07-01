@@ -1,6 +1,7 @@
 package com.sankuai.inf.leaf.plugin;
 
 import com.sankuai.inf.leaf.exception.InitException;
+import com.sankuai.inf.leaf.service.DailySegmentService;
 import com.sankuai.inf.leaf.service.SegmentService;
 import com.sankuai.inf.leaf.service.SnowflakeService;
 import org.slf4j.Logger;
@@ -23,9 +24,30 @@ public class LeafSpringBootStarterAutoConfigure {
     private LeafSpringBootProperties properties;
 
     @Bean
+    public DailySegmentService intLeafDailySegmentStarter() throws Exception {
+        if (properties != null
+                && properties.getDailySegment() != null
+                && properties.getDailySegment().isEnable()) {
+            return new DailySegmentService(
+                    properties.getDailySegment().getUrl(),
+                    properties.getDailySegment().getUsername(),
+                    properties.getDailySegment().getPassword(),
+                    properties.getDailySegment().getDriverClassName()
+            );
+        }
+        logger.warn("init leaf dailySegment ignore properties is {}", properties);
+        return null;
+    }
+
+    @Bean
     public SegmentService initLeafSegmentStarter() throws Exception {
         if (properties != null && properties.getSegment() != null && properties.getSegment().isEnable()) {
-            SegmentService segmentService = new SegmentService(properties.getSegment().getUrl(), properties.getSegment().getUsername(), properties.getSegment().getPassword());
+            SegmentService segmentService = new SegmentService(
+                    properties.getSegment().getUrl(),
+                    properties.getSegment().getUsername(),
+                    properties.getSegment().getPassword(),
+                    properties.getSegment().getDriverClassName()
+            );
             return segmentService;
         }
         logger.warn("init leaf segment ignore properties is {}", properties);
