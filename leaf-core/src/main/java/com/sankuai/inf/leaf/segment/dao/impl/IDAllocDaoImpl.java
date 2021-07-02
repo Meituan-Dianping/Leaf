@@ -74,7 +74,7 @@ public class IDAllocDaoImpl implements IDAllocDao {
     }
 
     @Override
-    public int deleteAllocTags(List<String> deleteAllocTags) {
+    public int deleteTags(List<String> deleteAllocTags) {
         SqlSession sqlSession = sqlSessionFactory.openSession();
         try {
             int delete = sqlSession.delete("com.sankuai.inf.leaf.segment.dao.IDAllocMapper.deleteAllocTags", deleteAllocTags);
@@ -86,11 +86,11 @@ public class IDAllocDaoImpl implements IDAllocDao {
     }
 
     @Override
-    public int insertTOLeafAllocTagList(List<String> insertTOLeafAllocTagList) {
+    public int batchInsert(List<String> tagList) {
         SqlSession sqlSession = sqlSessionFactory.openSession();
         try {
             int insert = sqlSession.insert("com.sankuai.inf.leaf.segment.dao.IDAllocMapper.insertTOLeafAllocTagList",
-                    insertTOLeafAllocTagList);
+                    tagList);
             sqlSession.commit();
             return insert;
         } finally {

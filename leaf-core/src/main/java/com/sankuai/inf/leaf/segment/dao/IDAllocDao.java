@@ -11,7 +11,7 @@ public interface IDAllocDao {
      LeafAlloc updateMaxIdByCustomStepAndGetLeafAlloc(LeafAlloc leafAlloc);
      List<String> getAllTags();
 
-     int deleteAllocTags(List<String> deleteAllocTags);
+     int deleteTags(List<String> deleteAllocTags);
 
-     int insertTOLeafAllocTagList(List<String> insertTOLeafAllocTagList);
+     int batchInsert(List<String> tagList);
 }

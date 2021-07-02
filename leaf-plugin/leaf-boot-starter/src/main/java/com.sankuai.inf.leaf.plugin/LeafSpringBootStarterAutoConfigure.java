@@ -32,7 +32,8 @@ public class LeafSpringBootStarterAutoConfigure {
                     properties.getDailySegment().getUrl(),
                     properties.getDailySegment().getUsername(),
                     properties.getDailySegment().getPassword(),
-                    properties.getDailySegment().getDriverClassName()
+                    properties.getDailySegment().getDriverClassName(),
+                    properties.getDailySegment().getValidationQuery()
             );
         }
         logger.warn("init leaf dailySegment ignore properties is {}", properties);

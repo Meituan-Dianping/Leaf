@@ -2,7 +2,7 @@ package com.sankuai.inf.leaf.segment.dao.impl;
 
 import com.alibaba.druid.pool.DruidDataSource;
 import com.sankuai.inf.leaf.segment.dao.DailyIDAllocDao;
-import com.sankuai.inf.leaf.segment.dao.IDAllocMapper;
+import com.sankuai.inf.leaf.segment.dao.DailyIDAllocMapper;
 import org.apache.ibatis.mapping.Environment;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSession;
@@ -28,7 +28,8 @@ public class DailyIDAllocDaoImpl implements DailyIDAllocDao {
         TransactionFactory transactionFactory = new JdbcTransactionFactory();
         Environment environment = new Environment("development", transactionFactory, dataSource);
         Configuration configuration = new Configuration(environment);
-        configuration.addMapper(IDAllocMapper.class);
+//        configuration.addMapper(IDAllocMapper.class);
+        configuration.addMapper(DailyIDAllocMapper.class);
         sqlSessionFactory = new SqlSessionFactoryBuilder().build(configuration);
     }
 

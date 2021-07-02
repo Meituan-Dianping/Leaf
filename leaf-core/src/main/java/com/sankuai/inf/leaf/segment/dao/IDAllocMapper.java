@@ -39,19 +39,20 @@ public interface IDAllocMapper {
     @Select("SELECT biz_tag FROM leaf_alloc")
     List<String> getAllTags();
 
-    @Delete("<script> DELETE leaf_alloc WHERE biz_tag in " +
-            "   <iterate conjunction=',' open='(' close=')' property='deleteAllocTags'>" +
-            "       #deleteAllocTags[]#" +
-            "   </iterate> " +
+    @Delete("<script> " +
+            "DELETE leaf_alloc WHERE biz_tag in " +
+            "   <foreach conjunction=',' open='(' close=')' property='tagList'>" +
+            "       #tagList[]#" +
+            "   </foreach> " +
             "</script>")
-    int deleteAllocTags(@Param("deleteAllocTags") List<String> deleteAllocTags);
+    int deleteAllocTags(@Param("tagList") List<String> tagList);
 
     @Insert("<script>" +
             "INSERT INTO leaf_alloc (biz_tag, step, description)" +
-            "VALUES " +
-            "   <iterate conjunction=',' open='(' close=')' property='insertTOLeafAllocTagList'>" +
-            "       #insertTOLeafAllocTagList[]#" +
-            "   </iterate> " +
+            " VALUES " +
+            "   <foreach collection='tagList' item='tag' separator=','>" +
+            "      ( #{tag}, 1, 'autoGenerator')" +
+            "   </foreach> " +
             "</script>")
-    int insertTOLeafAllocTagList(@Param("insertTOLeafAllocTagList") List<String> insertTOLeafAllocTagList);
+    int insertTOLeafAllocTagList(@Param("tagList") List<String> tagList);
 }

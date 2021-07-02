@@ -10,6 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>leaf-boot-starter</artifactId>
+    <version>1.0.1-RELEASE-daily-segment</version>
     <dependencies>
         <dependency>
             <groupId>com.sankuai.inf.leaf</groupId>

@@ -6,7 +6,6 @@ import com.sankuai.inf.leaf.IDGen;
 import com.sankuai.inf.leaf.common.Result;
 import com.sankuai.inf.leaf.exception.InitException;
 import com.sankuai.inf.leaf.segment.DailySegmentIDGenImpl;
-import com.sankuai.inf.leaf.segment.SegmentIDGenImpl;
 import com.sankuai.inf.leaf.segment.dao.DailyIDAllocDao;
 import com.sankuai.inf.leaf.segment.dao.IDAllocDao;
 import com.sankuai.inf.leaf.segment.dao.impl.DailyIDAllocDaoImpl;
@@ -28,17 +27,20 @@ public class DailySegmentService {
     private IDGen idGen;
     private DruidDataSource dataSource;
 
-    public DailySegmentService(String url, String username, String pwd, String driverClassName) throws SQLException, InitException {
-        Preconditions.checkNotNull(url,"database url can not be null");
-        Preconditions.checkNotNull(username,"username can not be null");
-        Preconditions.checkNotNull(pwd,"password can not be null");
-        Preconditions.checkNotNull(driverClassName,"password can not be null");
+    public DailySegmentService(String url, String username,
+                               String pwd, String driverClassName, String validationQuery)
+            throws SQLException, InitException {
+        Preconditions.checkNotNull(url, "database url can not be null");
+        Preconditions.checkNotNull(username, "username can not be null");
+        Preconditions.checkNotNull(pwd, "password can not be null");
+        Preconditions.checkNotNull(driverClassName, "password can not be null");
         // Config dataSource
         dataSource = new DruidDataSource();
         dataSource.setUrl(url);
         dataSource.setUsername(username);
         dataSource.setPassword(pwd);
         dataSource.setDriverClassName(driverClassName);
+        dataSource.setValidationQuery(validationQuery);
         dataSource.init();
 
         // daily config dao

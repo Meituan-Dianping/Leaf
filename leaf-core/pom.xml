@@ -12,7 +12,7 @@
     <version>1.0.1-RELEASE</version>
     <name>leaf-core</name>
     <properties>
-        <mysql-connector-java.version>5.1.38</mysql-connector-java.version>
+<!--        <mysql-connector-java.version>5.1.38</mysql-connector-java.version>-->
         <commons-io.version>2.4</commons-io.version>
         <log4j.version>2.7</log4j.version>
         <mybatis-spring.version>1.2.5</mybatis-spring.version>

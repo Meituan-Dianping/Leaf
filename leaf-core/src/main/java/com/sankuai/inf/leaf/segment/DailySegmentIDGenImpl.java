@@ -103,7 +103,7 @@ public class DailySegmentIDGenImpl extends SegmentIDGenImpl {
                 List<List<String>> deleteAllocTagListList = ListUtils.splitList(deleteAllocTagList, 200);
 
                 for (List<String> deleteAllocTags : deleteAllocTagListList) {
-                    dao.deleteAllocTags(deleteAllocTags);
+                    dao.deleteTags(deleteAllocTags);
                 }
             }
 
@@ -128,7 +128,7 @@ public class DailySegmentIDGenImpl extends SegmentIDGenImpl {
 
                 try {
                     // 生成每日的序列号生成器
-                    dao.insertTOLeafAllocTagList(new ArrayList<>(insertTOLeafAllocTagList));
+                    dao.batchInsert(new ArrayList<>(insertTOLeafAllocTagList));
                 } catch (Exception e) {
                     logger.warn("insertTOLeafAllocTagList db exception", e);
                 }

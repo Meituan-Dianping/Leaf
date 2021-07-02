@@ -10,20 +10,21 @@ import org.springframework.stereotype.Component;
  * @date 2019/10/09
  */
 @Component
-@ConfigurationProperties(prefix = "leaf",ignoreUnknownFields = true)
-@PropertySource("classpath:leaf.properties")
+@ConfigurationProperties(prefix = "leaf", ignoreUnknownFields = true)
+//@PropertySource("classpath:leaf.properties")
 public class LeafSpringBootProperties {
     private String name;
     private Segment segment;
     private DailySegment dailySegment;
     private Snowflake snowflake;
 
-    public static class DailySegment{
-        private boolean enable=false;
+    public static class DailySegment {
+        private boolean enable = false;
         private String url;
         private String username;
         private String password;
         private String driverClassName;
+        private String validationQuery;
 
         public String getUrl() {
             return url;
@@ -57,9 +58,18 @@ public class LeafSpringBootProperties {
             this.driverClassName = driverClassName;
         }
 
+        public String getValidationQuery() {
+            return validationQuery;
+        }
+
+        public void setValidationQuery(String validationQuery) {
+            this.validationQuery = validationQuery;
+        }
+
         public boolean isEnable() {
             return enable;
         }
+
         public void setEnable(boolean enable) {
             this.enable = enable;
         }
@@ -73,8 +83,8 @@ public class LeafSpringBootProperties {
     }
 
 
-    public static class Segment{
-        private boolean enable=false;
+    public static class Segment {
+        private boolean enable = false;
         private String url;
         private String username;
         private String password;
@@ -115,6 +125,7 @@ public class LeafSpringBootProperties {
         public boolean isEnable() {
             return enable;
         }
+
         public void setEnable(boolean enable) {
             this.enable = enable;
         }
@@ -126,10 +137,12 @@ public class LeafSpringBootProperties {
                     '}';
         }
     }
-    public static class Snowflake{
-        private boolean enable =false;
+
+    public static class Snowflake {
+        private boolean enable = false;
         private String address;
         private int port;
+
         public String getAddress() {
             return address;
         }
@@ -149,6 +162,7 @@ public class LeafSpringBootProperties {
         public boolean isEnable() {
             return enable;
         }
+
         public void setEnable(boolean enable) {
             this.enable = enable;
         }
