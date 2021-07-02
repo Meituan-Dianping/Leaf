@@ -26,3 +26,23 @@ CREATE TABLE `daily_leaf_alloc`
 ) ENGINE=InnoDB;
 
 ```
+
+```sql
+
+
+INSERT INTO daily_leaf_alloc (
+	biz_tag,
+	max_id,
+	step,
+	description
+)
+VALUES
+	(
+		'TEST',
+		1,
+		2000,
+		'Test leaf Segment Mode Get Id'
+	)
+	
+
+```
