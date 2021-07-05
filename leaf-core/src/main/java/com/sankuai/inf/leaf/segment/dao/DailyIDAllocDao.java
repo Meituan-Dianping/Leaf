@@ -1,5 +1,7 @@
 package com.sankuai.inf.leaf.segment.dao;
 
+import com.sankuai.inf.leaf.segment.model.DailyLeafAlloc;
+
 import java.util.List;
 
 /***
@@ -9,6 +11,8 @@ import java.util.List;
  * @date 2021/7/1  21:35
  */
 public interface DailyIDAllocDao {
+
+    List<DailyLeafAlloc> getAllDailyLeafAlloc();
 
     List<String> getAllTags();
 }

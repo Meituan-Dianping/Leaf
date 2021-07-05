@@ -1,6 +1,12 @@
 package com.sankuai.inf.leaf.segment.model;
 
-public class LeafAlloc {
+/***
+ *
+ *
+ * @author <a href="mailto:1934849492@qq.com">Darian</a> 
+ * @date 2021/7/2  18:21
+ */
+public class DailyLeafAlloc {
     private String key;
     private long maxId;
     private int step;

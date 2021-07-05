@@ -3,6 +3,7 @@ package com.sankuai.inf.leaf.segment.dao.impl;
 import com.alibaba.druid.pool.DruidDataSource;
 import com.sankuai.inf.leaf.segment.dao.DailyIDAllocDao;
 import com.sankuai.inf.leaf.segment.dao.DailyIDAllocMapper;
+import com.sankuai.inf.leaf.segment.model.DailyLeafAlloc;
 import org.apache.ibatis.mapping.Environment;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSession;
@@ -31,6 +32,16 @@ public class DailyIDAllocDaoImpl implements DailyIDAllocDao {
 //        configuration.addMapper(IDAllocMapper.class);
         configuration.addMapper(DailyIDAllocMapper.class);
         sqlSessionFactory = new SqlSessionFactoryBuilder().build(configuration);
+    }
+
+    @Override
+    public List<DailyLeafAlloc> getAllDailyLeafAlloc() {
+        SqlSession sqlSession = sqlSessionFactory.openSession(false);
+        try {
+            return sqlSession.selectList("com.sankuai.inf.leaf.segment.dao.DailyIDAllocMapper.getAllDailyLeafAllocs");
+        } finally {
+            sqlSession.close();
+        }
     }
 
     @Override

@@ -27,6 +27,12 @@ public class TestDailySegmentApplication {
 
     @PostConstruct
     public void init() {
-        dailySegmentService.getId("1");
+        System.out.println(dailySegmentService.getId("1"));
+        System.out.println(dailySegmentService.getId("TEST20210703"));
+        System.out.println(dailySegmentService.getId("TEST20210704"));
+        System.out.println(dailySegmentService.getId("TEST20210704"));
+        System.out.println(dailySegmentService.getId("TEST20210704"));
+        System.out.println(dailySegmentService.getId("TEST20210704"));
+
     }
 }

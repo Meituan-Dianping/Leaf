@@ -39,10 +39,10 @@ public class DailySegmentIDGenImpl extends SegmentIDGenImpl {
      */
     private volatile String NOW_DAY;
 
-    /**
-     * 刷新的次数
-     */
-    private volatile int initCount;
+//    /**
+//     * 刷新的次数
+//     */
+//    private volatile int initCount = 0;
 
     private DailyIDAllocDao dailyIDAllocDao;
 
@@ -84,10 +84,10 @@ public class DailySegmentIDGenImpl extends SegmentIDGenImpl {
             if (NOW_DAY == null || NOW_DAY.length() == 0 || !NOW_DAY.equals(nowDay)) {
                 // 说明第一次启动或者不是同一天
                 initBeforeTenDaysAndAfterTenDays();
-                initCount = 0;
+//                initCount = 0;
             }
 
-            initCount++;
+//            initCount++;
 
             List<String> allAllocTagList = dao.getAllTags();
 
@@ -96,44 +96,57 @@ public class DailySegmentIDGenImpl extends SegmentIDGenImpl {
 
                 for (String dailyAllocAllTag : dailyAllocAllTags) {
                     for (String beforeTenDay : BEFORE_TEN_DAYS) {
-                        deleteAllocTagList.add(dailyAllocAllTag + beforeTenDay);
+                        String deleteKey = dailyAllocAllTag + beforeTenDay;
+                        if (allAllocTagList.contains(deleteKey)) {
+                            deleteAllocTagList.add(deleteKey);
+                        }
                     }
                 }
 
-                List<List<String>> deleteAllocTagListList = ListUtils.splitList(deleteAllocTagList, 200);
 
-                for (List<String> deleteAllocTags : deleteAllocTagListList) {
-                    dao.deleteTags(deleteAllocTags);
+                if (deleteAllocTagList == null || deleteAllocTagList.isEmpty()) {
+                    logger.warn("deleteAllocTagList null || empty");
+                } else {
+                    List<List<String>> deleteAllocTagListList = ListUtils.splitList(deleteAllocTagList, 200);
+                    for (List<String> deleteAllocTags : deleteAllocTagListList) {
+                        logger.info("deleteAllocTags list : " + deleteAllocTags);
+                        dao.deleteTags(deleteAllocTags);
+                    }
                 }
             }
 
 
-            if (initCount < 3) {
-                // 随机 5-10 天
-                Set<String> insertTOLeafAllocTagList = new HashSet<>();
-                for (String allTag : dailyAllocAllTags) {
-                    int dailyCount = ThreadLocalRandom.current().nextInt(5, 10);
-                    for (int i = 0; i < dailyCount; i++) {
-                        insertTOLeafAllocTagList.add(allTag + (AFTER_TEN_DAYS.get(i)));
-                    }
+//            if (initCount < 4) {
+            // 随机 5-10 天
+            Set<String> insertTOLeafAllocTagList = new HashSet<>();
+            for (String allTag : dailyAllocAllTags) {
+                int dailyCount = ThreadLocalRandom.current().nextInt(3, 5);
+                for (int i = 0; i < dailyCount; i++) {
+                    insertTOLeafAllocTagList.add(allTag + (AFTER_TEN_DAYS.get(i)));
                 }
+            }
 
+            if (insertTOLeafAllocTagList == null || insertTOLeafAllocTagList.isEmpty()) {
+                return;
+            }
+
+            for (String allocTag : allAllocTagList) {
+                insertTOLeafAllocTagList.remove(allocTag);
+            }
+
+            try {
                 if (insertTOLeafAllocTagList == null || insertTOLeafAllocTagList.isEmpty()) {
+                    logger.info("insertTOLeafAllocTagList tagList empty, not need");
                     return;
                 }
 
-                for (String allocTag : allAllocTagList) {
-                    insertTOLeafAllocTagList.remove(allocTag);
-                }
-
-                try {
-                    // 生成每日的序列号生成器
-                    dao.batchInsert(new ArrayList<>(insertTOLeafAllocTagList));
-                } catch (Exception e) {
-                    logger.warn("insertTOLeafAllocTagList db exception", e);
-                }
-
+                // 生成每日的序列号生成器
+                dao.batchInsert(new ArrayList<>(insertTOLeafAllocTagList));
+            } catch (Exception e) {
+                logger.warn("insertTOLeafAllocTagList db exception", e);
             }
+
+//            }
 
         } catch (Exception e) {
             logger.warn("insertLeafAllocByDailyLeafAlloc cache from db exception", e);
@@ -150,10 +163,12 @@ public class DailySegmentIDGenImpl extends SegmentIDGenImpl {
         for (int i = 1; i < 11; i++) {
             AFTER_TEN_DAYS.add(DateUtils.formatyyyyMMdd(DateUtils.addDay(new Date(), i)));
         }
+        logger.info("AFTER_TEN_DAYS:" + AFTER_TEN_DAYS);
 
         BEFORE_TEN_DAYS = new ArrayList<>();
-        for (int i = -15; i > -10; i--) {
+        for (int i = -20; i < -10; i++) {
             BEFORE_TEN_DAYS.add(DateUtils.formatyyyyMMdd(DateUtils.addDay(new Date(), i)));
         }
+        logger.info("BEFORE_TEN_DAYS:" + BEFORE_TEN_DAYS);
     }
 }

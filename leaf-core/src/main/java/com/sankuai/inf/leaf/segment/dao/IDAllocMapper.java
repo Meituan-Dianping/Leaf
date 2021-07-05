@@ -40,19 +40,20 @@ public interface IDAllocMapper {
     List<String> getAllTags();
 
     @Delete("<script> " +
-            "DELETE leaf_alloc WHERE biz_tag in " +
-            "   <foreach conjunction=',' open='(' close=')' property='tagList'>" +
-            "       #tagList[]#" +
+            "DELETE FROM leaf_alloc WHERE biz_tag in " +
+            "   <foreach collection='list' item='tag' open='(' close=')' separator=','>" +
+            "       #{tag}" +
             "   </foreach> " +
             "</script>")
-    int deleteAllocTags(@Param("tagList") List<String> tagList);
+    int deleteAllocTags(List<String> tagList);
 
     @Insert("<script>" +
-            "INSERT INTO leaf_alloc (biz_tag, step, description)" +
+            "INSERT INTO leaf_alloc (biz_tag, max_id, step, description)" +
             " VALUES " +
-            "   <foreach collection='tagList' item='tag' separator=','>" +
-            "      ( #{tag}, 1, 'autoGenerator')" +
-            "   </foreach> " +
+            "   <foreach collection='list' item='tag' separator=','>" +
+            "      ( #{tag}, 1 , 100, 'autoGenerator')" +
+            "   </foreach>" +
             "</script>")
-    int insertTOLeafAllocTagList(@Param("tagList") List<String> tagList);
+        // mybatis 注解上 @Param("xx") 对 list 不起作用
+    int insertTOLeafAllocTagList(List<String> tagList);
 }
