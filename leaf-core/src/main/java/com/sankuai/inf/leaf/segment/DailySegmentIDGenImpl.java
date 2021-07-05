@@ -13,7 +13,11 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeUnit;
 
 /***
  *
@@ -54,17 +58,30 @@ public class DailySegmentIDGenImpl extends SegmentIDGenImpl {
     public boolean init() {
         logger.info("DailySegmentIdGenImpl Init ...");
         // 确保加载到kv后才初始化成功
+        insertLeafAllocByDailyLeafAlloc();
         updateCacheFromDb();
         initOK = true;
         updateCacheFromDbAtEveryMinute();
+        updateLeafAllocByDailyLeafAllocFiveMinute();
         return initOK;
     }
 
-    @Override
-    protected void updateCacheFromDb() {
-        logger.info("DailySegmentIdGenImpl updateCacheFromDb ... ");
-        insertLeafAllocByDailyLeafAlloc();
-        super.updateCacheFromDb();
+    protected void updateLeafAllocByDailyLeafAllocFiveMinute() {
+        ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor(new ThreadFactory() {
+            @Override
+            public Thread newThread(Runnable r) {
+                Thread t = new Thread(r);
+                t.setName("check-dailyLeafAlloc-thread");
+                t.setDaemon(true);
+                return t;
+            }
+        });
+        service.scheduleWithFixedDelay(new Runnable() {
+            @Override
+            public void run() {
+                insertLeafAllocByDailyLeafAlloc();
+            }
+        }, 5, 5, TimeUnit.MINUTES);
     }
 
     /**
@@ -84,6 +101,7 @@ public class DailySegmentIDGenImpl extends SegmentIDGenImpl {
             if (NOW_DAY == null || NOW_DAY.length() == 0 || !NOW_DAY.equals(nowDay)) {
                 // 说明第一次启动或者不是同一天
                 initBeforeTenDaysAndAfterTenDays();
+                NOW_DAY = nowDay;
 //                initCount = 0;
             }
 
@@ -96,7 +114,7 @@ public class DailySegmentIDGenImpl extends SegmentIDGenImpl {
 
                 for (String dailyAllocAllTag : dailyAllocAllTags) {
                     for (String beforeTenDay : BEFORE_TEN_DAYS) {
-                        String deleteKey = dailyAllocAllTag + beforeTenDay;
+                        String deleteKey = dailyAllocAllTag + "_" + beforeTenDay;
                         if (allAllocTagList.contains(deleteKey)) {
                             deleteAllocTagList.add(deleteKey);
                         }
@@ -122,7 +140,7 @@ public class DailySegmentIDGenImpl extends SegmentIDGenImpl {
             for (String allTag : dailyAllocAllTags) {
                 int dailyCount = ThreadLocalRandom.current().nextInt(3, 5);
                 for (int i = 0; i < dailyCount; i++) {
-                    insertTOLeafAllocTagList.add(allTag + (AFTER_TEN_DAYS.get(i)));
+                    insertTOLeafAllocTagList.add(allTag + "_" + (AFTER_TEN_DAYS.get(i)));
                 }
             }
 

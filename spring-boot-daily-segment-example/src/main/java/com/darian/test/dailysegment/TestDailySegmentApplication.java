@@ -1,5 +1,6 @@
 package com.darian.test.dailysegment;
 
+import com.sankuai.inf.leaf.common.DateUtils;
 import com.sankuai.inf.leaf.plugin.annotation.EnableLeafServer;
 import com.sankuai.inf.leaf.service.DailySegmentService;
 import org.springframework.boot.SpringApplication;
@@ -7,6 +8,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import java.util.Date;
 
 /***
  *
@@ -27,12 +29,7 @@ public class TestDailySegmentApplication {
 
     @PostConstruct
     public void init() {
-        System.out.println(dailySegmentService.getId("1"));
-        System.out.println(dailySegmentService.getId("TEST20210703"));
-        System.out.println(dailySegmentService.getId("TEST20210704"));
-        System.out.println(dailySegmentService.getId("TEST20210704"));
-        System.out.println(dailySegmentService.getId("TEST20210704"));
-        System.out.println(dailySegmentService.getId("TEST20210704"));
+        System.out.println(dailySegmentService.getId("TEST" + "_" + DateUtils.formatyyyyMMdd(new Date())));
 
     }
 }
