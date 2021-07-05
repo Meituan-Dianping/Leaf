@@ -211,7 +211,7 @@ public class SnowflakeZookeeperHolder {
                     LOGGER.warn("create parent dir error===");
                 }
             } catch (IOException e) {
-                LOGGER.warn("craete workerID conf file error", e);
+                LOGGER.warn("create workerID conf file error", e);
             }
         }
     }
