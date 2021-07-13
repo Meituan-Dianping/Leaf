@@ -4,6 +4,13 @@
        xmlns:context="http://www.springframework.org/schema/context"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <bean id="SnowflakeService" class="com.sankuai.inf.leaf.service.SnowflakeService"/>
-    <bean id="SegmentService" class="com.sankuai.inf.leaf.service.SegmentService"/>
+    <bean id="SnowflakeService" class="com.sankuai.inf.leaf.service.SnowflakeService">
+        <constructor-arg index="0" value="127.0.0.1"/>
+        <constructor-arg index="1" value="2181"/>
+    </bean>
+    <bean id="SegmentService" class="com.sankuai.inf.leaf.service.SegmentService">
+        <constructor-arg index="0" value="jdbc:mysql://localhost:3306/leafdb?autoReconnect=true&amp;useUnicode=true&amp;characterEncoding=utf8&amp;zeroDateTimeBehavior=convertToNull&amp;useSSL=false&amp;serverTimezone=CTT"/>
+        <constructor-arg index="1" value="root"/>
+        <constructor-arg index="2" value="123456"/>
+    </bean>
 </beans>
