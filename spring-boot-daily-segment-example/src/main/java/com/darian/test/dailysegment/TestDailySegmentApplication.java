@@ -30,6 +30,9 @@ public class TestDailySegmentApplication {
     @PostConstruct
     public void init() {
         System.out.println(dailySegmentService.getId("TEST" + "_" + DateUtils.formatyyyyMMdd(new Date())));
-
+        System.out.println(dailySegmentService.getId("TEST" + "_" + DateUtils.formatyyyyMMdd(DateUtils.addDay(new Date(), 1))));
+        System.out.println(dailySegmentService.getId("TEST" + "_" + DateUtils.formatyyyyMMdd(DateUtils.addDay(new Date(), 2))));
+        System.out.println(dailySegmentService.getId("CASE" + "_" + DateUtils.formatyyyyMMdd(new Date())));
+        System.out.println(dailySegmentService.getId("LEAF" + "_" + DateUtils.formatyyyyMMdd(new Date())));
     }
 }

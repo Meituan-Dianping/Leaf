@@ -178,7 +178,7 @@ public class DailySegmentIDGenImpl extends SegmentIDGenImpl {
      */
     private void initBeforeTenDaysAndAfterTenDays() {
         AFTER_TEN_DAYS = new ArrayList<>();
-        for (int i = 1; i < 11; i++) {
+        for (int i = 0; i < 11; i++) {
             AFTER_TEN_DAYS.add(DateUtils.formatyyyyMMdd(DateUtils.addDay(new Date(), i)));
         }
         logger.info("AFTER_TEN_DAYS:" + AFTER_TEN_DAYS);
