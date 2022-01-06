@@ -24,10 +24,10 @@ public interface IDAllocMapper {
     })
     LeafAlloc getLeafAlloc(@Param("tag") String tag);
 
-    @Update("UPDATE leaf_alloc SET max_id = max_id + step WHERE biz_tag = #{tag}")
+    @Update("UPDATE leaf_alloc SET max_id = max_id + step , update_time = systimestamp WHERE biz_tag = #{tag}")
     void updateMaxId(@Param("tag") String tag);
 
-    @Update("UPDATE leaf_alloc SET max_id = max_id + #{step} WHERE biz_tag = #{key}")
+    @Update("UPDATE leaf_alloc SET max_id = max_id + #{step}  , update_time = systimestamp WHERE biz_tag = #{key}")
     void updateMaxIdByCustomStep(@Param("leafAlloc") LeafAlloc leafAlloc);
 
     @Select("SELECT biz_tag FROM leaf_alloc")

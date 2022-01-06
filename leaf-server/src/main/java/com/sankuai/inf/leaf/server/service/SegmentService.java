@@ -10,10 +10,13 @@ import com.sankuai.inf.leaf.segment.dao.IDAllocDao;
 import com.sankuai.inf.leaf.segment.dao.impl.IDAllocDaoImpl;
 import com.sankuai.inf.leaf.server.Constants;
 import com.sankuai.inf.leaf.server.exception.InitException;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import javax.sql.DataSource;
 import java.sql.SQLException;
 import java.util.Properties;
 
@@ -22,18 +25,34 @@ public class SegmentService {
     private Logger logger = LoggerFactory.getLogger(SegmentService.class);
 
     private IDGen idGen;
-    private DruidDataSource dataSource;
+
+    /*private DataSource getDataSource(Properties properties) throws SQLException {
+        // Config dataSource
+        DruidDataSource dataSource = new DruidDataSource();
+        dataSource.setUrl(properties.getProperty(Constants.LEAF_JDBC_URL));
+        dataSource.setUsername(properties.getProperty(Constants.LEAF_JDBC_USERNAME));
+        dataSource.setPassword(properties.getProperty(Constants.LEAF_JDBC_PASSWORD));
+        dataSource.init();
+        return dataSource;
+    }*/
+
+    private DataSource getDataSource(Properties properties) throws SQLException {
+        // Config dataSource
+        HikariConfig configuration = new HikariConfig();
+        configuration.setDriverClassName(properties.getProperty(Constants.LEAF_JDBC_DRIVE));
+        configuration.setJdbcUrl(properties.getProperty(Constants.LEAF_JDBC_URL));
+        configuration.setUsername(properties.getProperty(Constants.LEAF_JDBC_USERNAME));
+        configuration.setPassword(properties.getProperty(Constants.LEAF_JDBC_PASSWORD));
+        DataSource dataSource = new HikariDataSource(configuration);
+        return dataSource;
+    }
 
     public SegmentService() throws SQLException, InitException {
         Properties properties = PropertyFactory.getProperties();
         boolean flag = Boolean.parseBoolean(properties.getProperty(Constants.LEAF_SEGMENT_ENABLE, "true"));
         if (flag) {
-            // Config dataSource
-            dataSource = new DruidDataSource();
-            dataSource.setUrl(properties.getProperty(Constants.LEAF_JDBC_URL));
-            dataSource.setUsername(properties.getProperty(Constants.LEAF_JDBC_USERNAME));
-            dataSource.setPassword(properties.getProperty(Constants.LEAF_JDBC_PASSWORD));
-            dataSource.init();
+
+            DataSource dataSource  = getDataSource(properties);
 
             // Config Dao
             IDAllocDao dao = new IDAllocDaoImpl(dataSource);
