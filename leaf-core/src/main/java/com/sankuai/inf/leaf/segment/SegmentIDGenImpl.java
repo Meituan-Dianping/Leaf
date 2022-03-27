@@ -200,6 +200,7 @@ public class SegmentIDGenImpl implements IDGen {
     }
 
     public Result getIdFromSegmentBuffer(final SegmentBuffer buffer) {
+        boolean continueTake = true;
         while (true) {
             buffer.rLock().lock();
             try {
@@ -232,11 +233,21 @@ public class SegmentIDGenImpl implements IDGen {
                 long value = segment.getValue().getAndIncrement();
                 if (value < segment.getMax()) {
                     return new Result(value, Status.SUCCESS);
+                }else{
+                    if (!continueTake) {
+                        logger.error("Both two segments in {} are not ready!", buffer);
+                        return new Result(EXCEPTION_ID_TWO_SEGMENTS_ARE_NULL, Status.EXCEPTION);
+                    }
                 }
             } finally {
                 buffer.rLock().unlock();
             }
             waitAndSleep(buffer);
+            if (!buffer.isNextReady()) {
+                continueTake = false;
+                continue;
+            }
+
             buffer.wLock().lock();
             try {
                 final Segment segment = buffer.getCurrent();
@@ -247,9 +258,6 @@ public class SegmentIDGenImpl implements IDGen {
                 if (buffer.isNextReady()) {
                     buffer.switchPos();
                     buffer.setNextReady(false);
-                } else {
-                    logger.error("Both two segments in {} are not ready!", buffer);
-                    return new Result(EXCEPTION_ID_TWO_SEGMENTS_ARE_NULL, Status.EXCEPTION);
                 }
             } finally {
                 buffer.wLock().unlock();
