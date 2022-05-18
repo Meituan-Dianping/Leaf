@@ -40,11 +40,11 @@
         <junit.version>4.12</junit.version>
         <leaf.spring.version>5.0.5.RELEASE</leaf.spring.version>
         <maven.compiler.version>3.5.1</maven.compiler.version>
-        <mybatis.version>3.3.0</mybatis.version>
+        <mybatis.version>3.5.9</mybatis.version>
         <perf4j.version>0.9.16</perf4j.version>
-        <curator.version>2.6.0</curator.version>
+        <curator.version>5.2.1</curator.version>
         <slf4j.version>1.7.32</slf4j.version>
-        <druid.version>1.0.18</druid.version>
+        <druid.version>1.2.8</druid.version>
         <jackson-databind.version>2.9.6</jackson-databind.version>
         <mysql-connector-java.version>8.0.27</mysql-connector-java.version>
         <commons-io.version>2.4</commons-io.version>
